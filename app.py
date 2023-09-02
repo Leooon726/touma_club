@@ -5,14 +5,17 @@ from flask import Flask, render_template, request, send_from_directory,send_file
 import logging
 import subprocess
 
-logging.basicConfig(level=logging.DEBUG)  # Set the desired log level
+# Set up logging
+log_file = 'app.log'
+logging.basicConfig(filename=log_file, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    with open('user_input_template.txt', 'r') as f:
+    # TODO: do not use absolute path.
+    with open('/home/lighthouse/touma_club/user_input_template.txt', 'r') as f:
         default_text = f.read()
     return render_template('index.html', default_text=default_text, message=None)
 
@@ -32,16 +35,16 @@ def save_text():
         except subprocess.CalledProcessError as e:
             print("Error:", e)
 
-        excel_generated_link = output_excel_file_path
-        # logger.error(excel_generated_link)
-        return render_template('index.html', default_text=text_content, message='Text saved successfully.', excel_generated=excel_generated_link)
+        # return render_template('index.html', default_text=text_content, message='Text saved successfully.', excel_generated=excel_generated_link)
+        return send_file(output_excel_file_path, as_attachment=True)
     else:
         return render_template('index.html', default_text='', message='No text to save.')
 
 @app.route('/download')
 def download_file():
+    # TODO: change file_path as a variable.
     file_path = '/home/lighthouse/touma_club/generated_agenda.xlsx'
-    return send_file(file_path, as_attachment=True)
+    return 
 
 if __name__ == '__main__':
     app.run(debug=True)
