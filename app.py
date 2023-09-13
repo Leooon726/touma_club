@@ -8,27 +8,23 @@ import json
 
 from flask import Flask, render_template, request,send_file,jsonify,session
 
+from agenda_generation_adaptor import AgendaGenerationAdaptor
+
 # Set up logging
 log_file = 'app.log'
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
 # Load configuration from YAML file
 with open('/home/lighthouse/touma_club/app_config.yaml', 'r') as config_file:
     app.config.update(yaml.safe_load(config_file))
 
-@app.route('/')
-def index():
-    with open(app.config['user_input_txt_template_path'], 'r') as f:
-        default_text = f.read()
-    return render_template('index.html', default_text=default_text, message=None)
 
-@app.route('/SelectTemplates')
-def select_template():
-    return render_template('DownloadAgenda/SelectTemplates.html')
-
-def _create_a_new_output_file_directory():
+def _get_or_create_output_file_directory():
+    if 'output_directory' in session:
+        return session['output_directory']
     # Create a filename that includes datetime and the token
     current_datetime = datetime.now().strftime("%Y%m%d%H%M%S")
     token = secrets.token_hex(2)[:3]
@@ -36,13 +32,28 @@ def _create_a_new_output_file_directory():
     file_directory = os.path.join(app.config['output_files_directory'],folder_name)
     # Create the directory if it doesn't exist
     os.makedirs(file_directory, exist_ok=True)
+    session['output_directory'] = file_directory
     return file_directory
+
+
+# @app.route('/')
+# def index():
+#     with open(app.config['user_input_txt_template_path'], 'r') as f:
+#         default_text = f.read()
+#     return render_template('index.html', default_text=default_text, message=None)
+
+@app.route('/')
+@app.route('/SelectTemplates')
+def select_template():
+    # TODO(Changhong): also return options of templates.
+    return render_template('DownloadAgenda/SelectTemplates.html')
+
 
 @app.route('/generate', methods=['POST'])
 def save_text():
     text_content = request.form.get('text_content')
     if text_content:
-        file_directory = _create_a_new_output_file_directory()
+        file_directory = _get_or_create_output_file_directory()
 
         user_input_file_path = os.path.join(file_directory,'user_input.txt')
         with open(user_input_file_path, 'w') as file:
@@ -50,6 +61,7 @@ def save_text():
 
         output_excel_file_path = os.path.join(file_directory, 'generated_agenda.xlsx')
 
+        # TODO: make it configurable.
         command = f"/home/lighthouse/.pyenv/shims/python3 /home/lighthouse/tm_meeting_assistant/main.py -i {user_input_file_path} -o {output_excel_file_path} -c /home/lighthouse/agenda_template_zoo/huangpu_rise_template_for_print/engine_config.yaml"
         try:
             subprocess.run(command, shell=True, check=True)
@@ -61,28 +73,26 @@ def save_text():
     else:
         return render_template('index.html', default_text='', message='生成失败')
 
-# @app.route('/select_template', methods=['POST'])
-# def select_template():
-#     # TODO: to be implemented.
-#     session['template_name'] = request.form.get('template_name')
+
+@app.route('/template_fields', methods=['POST'])
+def record_template():
+    session['selected_template'] = request.form.get('selected_template')
+    logger.debug(f"Selected template: {session['selected_template']}")
+    
+    output_directory = _get_or_create_output_file_directory()
+    fields_dict = AgendaGenerationAdaptor.get_fields_dict(session['selected_template'],output_directory)
+    return jsonify(fields_dict)
 
 
 @app.route('/generate_with_text_blocks', methods=['POST'])
 def generate_with_text_blocks():
-    user_input_dict = {}
-    user_input_dict['meeting_info'] = request.form.get('meeting_info')
-    user_input_dict['role_name_list'] = request.form.get('role_name_list')
-    user_input_dict['schedule_text'] = request.form.get('schedule_text')
-    user_input_dict['pathway_project_info'] = request.form.get('pathway_project_info')
+    # Receive a post with json string, dump it into .json file.
+    json_dict = request.get_json()
 
-    # TODO: add detailed check and provide detailed failure causes.
-    if not (user_input_dict['meeting_info'] and user_input_dict['role_name_list'] and user_input_dict['schedule_text']):
-        return render_template('index.html', default_text='', message='生成失败')
-
-    file_directory = _create_a_new_output_file_directory()
+    file_directory = _get_or_create_output_file_directory()
     user_input_file_path = os.path.join(file_directory,'user_input.json')
     with open(user_input_file_path, 'w') as json_file:
-        json.dump(user_input_dict, json_file, indent=4)
+        json.dump(json_dict, json_file, indent=4, ensure_ascii=False)
     output_excel_file_path = os.path.join(file_directory, 'generated_agenda.xlsx')
 
     response_data = {
@@ -93,7 +103,8 @@ def generate_with_text_blocks():
 
     # TODO: support input .json file as input file.
     # TODO: make -c configable. use session['template_name'] to get the right engine_config.yaml
-    command = f"python3 /home/lighthouse/tm_meeting_assistant/main.py -i {user_input_file_path} -o {output_excel_file_path} -c /www/wwwroot/tmma_website/engine_config.yaml"
+    engine_config_path = AgendaGenerationAdaptor.template_name_to_config_path(session['selected_template'])
+    command = f"/home/lighthouse/.pyenv/shims/python3 /home/lighthouse/tm_meeting_assistant/main.py -i {user_input_file_path} -o {output_excel_file_path} -c {engine_config_path}"
     try:
         subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError as e:
@@ -102,11 +113,6 @@ def generate_with_text_blocks():
     # return send_file(output_excel_file_path, as_attachment=True)
     return jsonify(response_data)
 
-# @app.route('/download')
-# def download_file():
-#     # TODO: change file_path as a variable.
-#     file_path = '/home/lighthouse/touma_club/generated_agenda.xlsx'
-#     return 
 
 if __name__ == '__main__':
     app.run(debug=True)

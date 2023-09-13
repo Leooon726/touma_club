@@ -1,7 +1,7 @@
 import unittest
 import json, os
 from unittest.mock import patch, Mock
-from touma_club.app import app
+from app import app
 import subprocess
 
 class FlaskTest(unittest.TestCase):
@@ -32,47 +32,38 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(response.status_code, 200)  # Adjust this based on your actual error handling
 
     def test_generate_with_text_blocks(self):
-
+        # prepare data for test.
         def _create_simulated_form_data():
-            role_name_string = '''role name text'''
+            with open('/home/lighthouse/touma_club/test/example_user_input.json', 'r') as file:
+                json_content = json.load(file)
+            return json_content
 
-            meeting_info_string = '''meeting info text'''
+        with self.app.session_transaction() as session:
+            session['selected_template'] = 'jabil_jouse_template_for_print'
+        simulated_data = _create_simulated_form_data()
 
-            pathway_project_info_string = '''pathway project info text'''
-
-            schedule_text_string = '''schedule text'''
-
-            # Simulate a POST request with form data
-            data = {
-                'meeting_info': meeting_info_string,
-                'role_name_list': role_name_string,
-                'schedule_text': schedule_text_string,
-                'pathway_project_info': pathway_project_info_string
-            }
-            return data
-
-        data = _create_simulated_form_data()
-        response = self.app.post('/generate_with_text_blocks', data=data, follow_redirects=True)
-        data_dict = json.loads(response.data)
+        response = self.app.post('/generate_with_text_blocks', json=simulated_data, follow_redirects=True)
+        response_dict = json.loads(response.data)
 
         # Check if the response status code is 200, indicating success
         self.assertEqual(response.status_code, 200)
 
         # Check if the JSON file was created
-        self.assertTrue(os.path.isfile(data_dict['user_input_file_path']))
+        self.assertTrue(os.path.isfile(response_dict['user_input_file_path']))
+        self.assertTrue(os.path.isfile(response_dict['output_excel_file_path']))
 
-        # Load and validate the content of the JSON file
-        with open(data_dict['user_input_file_path'], 'r') as file:
-            json_content = json.load(file)
-        self.assertEqual(json_content['meeting_info'], 'meeting info text')
-        self.assertEqual(json_content['role_name_list'], 'role name text')
-        self.assertEqual(json_content['schedule_text'], 'schedule text')
-        self.assertEqual(json_content['pathway_project_info'], 'pathway project info text')
+    def test_list_templates(self):
+        response = self.app.post('/list_templates', data={'user_name': 'Test1111'})
+        print('header1: ',response.headers)
+        data_dict = json.loads(response.data)
+        print('tested_list: ',data_dict['template_names'])
 
-    # def test_download_route(self):
-    #     response = self.app.get('/download')
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response.headers['Content-Disposition'], 'attachment; filename=generated_agenda.xlsx')
+
+    def test_template_fields(self):
+        data = {'selected_template':'jabil_jouse_template_for_print'}
+        response = self.app.post('/template_fields', data=data, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        print(response)
 
 if __name__ == '__main__':
     unittest.main()
