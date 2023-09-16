@@ -76,5 +76,15 @@ class FlaskTest(unittest.TestCase):
         response = self.app.get('/export_pdf', follow_redirects=True)
         print(response.data)
 
+    def test_export_image(self):
+        # Simulate data.
+        with self.app.session_transaction() as session:
+            session['output_directory'] = '/home/lighthouse/touma_club/test'
+            session['output_excel_file_path'] = '/home/lighthouse/touma_club/test/example_agenda.xlsx'
+            
+        # Test.
+        response = self.app.get('/export_image', follow_redirects=True)
+        print(response.data)
+
 if __name__ == '__main__':
     unittest.main()

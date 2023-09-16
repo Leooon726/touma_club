@@ -115,15 +115,41 @@ def generate_with_text_blocks():
     return jsonify(response_data)
 
 
-@app.route('/export_pdf', methods=['GET'])
-def export_pdf():
+@app.route('/export_image', methods=['GET'])
+def export_image():
+    if 'output_pdf_file_path' not in session:
+        pdf_path = _export_pdf()
+    else:
+        pdf_path = session['output_pdf_file_path']
+
+    output_image_file_path = os.path.join(session['output_directory'],'exported_agenda.jpg')
+    command = [
+        "convert",
+        "-density", "300",
+        "-quality", "100",
+        "-units", "PixelsPerInch",
+        pdf_path,
+        output_image_file_path
+    ]
+
+    subprocess.run(command)
+    response_data = {'image_path':output_image_file_path}
+    return jsonify(response_data)
+
+
+def _export_pdf():
     input_excel_file_path = session['output_excel_file_path']
     output_pdf_file_path = os.path.join(session['output_directory'],'exported_agenda.pdf')
+    session['output_pdf_file_path'] = output_pdf_file_path
 
     # Run the unoconv command to convert the input Excel file to PDF
     unoconv_command = ['unoconv', '-f', 'pdf', '-o', output_pdf_file_path, input_excel_file_path]
     subprocess.run(unoconv_command)
+    return output_pdf_file_path
 
+@app.route('/export_pdf', methods=['GET'])
+def export_pdf():
+    output_pdf_file_path = _export_pdf()
     response_data = {'pdf_path':output_pdf_file_path}
     return jsonify(response_data)
 
