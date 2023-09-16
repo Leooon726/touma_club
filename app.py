@@ -80,8 +80,8 @@ def record_template():
     logger.debug(f"Selected template: {session['selected_template']}")
     
     output_directory = _get_or_create_output_file_directory()
-    fields_dict = AgendaGenerationAdaptor.get_fields_dict(session['selected_template'],output_directory)
-    return jsonify(fields_dict)
+    fields_dict = AgendaGenerationAdaptor.get_meeting_info_fields_dict(session['selected_template'],output_directory)
+    return jsonify(data=fields_dict, ensure_ascii=False)
 
 
 @app.route('/generate_with_text_blocks', methods=['POST'])
@@ -94,6 +94,7 @@ def generate_with_text_blocks():
     with open(user_input_file_path, 'w') as json_file:
         json.dump(json_dict, json_file, indent=4, ensure_ascii=False)
     output_excel_file_path = os.path.join(file_directory, 'generated_agenda.xlsx')
+    session['output_excel_file_path'] = output_excel_file_path
 
     response_data = {
         'user_input_file_path': user_input_file_path,
@@ -113,6 +114,18 @@ def generate_with_text_blocks():
     # return send_file(output_excel_file_path, as_attachment=True)
     return jsonify(response_data)
 
+
+@app.route('/export_pdf', methods=['GET'])
+def export_pdf():
+    input_excel_file_path = session['output_excel_file_path']
+    output_pdf_file_path = os.path.join(session['output_directory'],'exported_agenda.pdf')
+
+    # Run the unoconv command to convert the input Excel file to PDF
+    unoconv_command = ['unoconv', '-f', 'pdf', '-o', output_pdf_file_path, input_excel_file_path]
+    subprocess.run(unoconv_command)
+
+    response_data = {'pdf_path':output_pdf_file_path}
+    return jsonify(response_data)
 
 if __name__ == '__main__':
     app.run(debug=True)

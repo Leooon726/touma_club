@@ -58,12 +58,23 @@ class FlaskTest(unittest.TestCase):
         data_dict = json.loads(response.data)
         print('tested_list: ',data_dict['template_names'])
 
-
     def test_template_fields(self):
         data = {'selected_template':'jabil_jouse_template_for_print'}
         response = self.app.post('/template_fields', data=data, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        print(response)
+        decoded_response = response.data.decode('utf-8')
+        data = json.loads(decoded_response)
+        print(data)
+
+    def test_export_pdf(self):
+        # Simulate data.
+        with self.app.session_transaction() as session:
+            session['output_directory'] = '/home/lighthouse/touma_club/test'
+            session['output_excel_file_path'] = '/home/lighthouse/touma_club/test/example_agenda.xlsx'
+
+        # Test.
+        response = self.app.get('/export_pdf', follow_redirects=True)
+        print(response.data)
 
 if __name__ == '__main__':
     unittest.main()
