@@ -67,6 +67,14 @@
                 </form>
             </div>
         </div>
+
+        <script>
+            $(document).ready(function(){
+                $.post("./record_template", function(returnData){
+                    console.log(returnData);
+                })
+            })
+        </script>
     </body>
 
 </html>

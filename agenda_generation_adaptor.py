@@ -6,7 +6,7 @@ _TEMPLATE_ZOO_PATH = '/home/lighthouse/agenda_template_zoo'
 _PYTHON_PATH = '/home/lighthouse/.pyenv/shims/python3'
 
 class AgendaGenerationAdaptor():
-    _DEFAULT_ROLE_FIELDS = ['摄影师','会议经理','时间官','哼哈师','语法师','总体点评师','破冰师','主席','主持人','备稿演讲者','即兴主持人','即兴点评师','备稿点评师','下一期会议经理']
+    _DEFAULT_ROLE_FIELDS = ['礼宾师','摄影师','会议经理','时间官','哼哈师','语法师','总体点评师','破冰师','主席','主持人','备稿演讲者','即兴主持人','即兴点评师','备稿点评师','下一期会议经理']
     
     def __init__(self):
         pass
@@ -33,10 +33,13 @@ class AgendaGenerationAdaptor():
         for field_and_example_dict in fields_dict:
             field = field_and_example_dict['field_name']
             example = field_and_example_dict['example'] if 'example' in field_and_example_dict else ''
-            if AgendaGenerationAdaptor._is_role_field(field):
-                meeting_info_and_role_dict['role_name_list'].append({'role':field,'name':example})
-            else:
+            if not AgendaGenerationAdaptor._is_role_field(field):
                 meeting_info_and_role_dict['meeting_info'].append({'field_name':field,'content':example})
+
+        for default_role_field in AgendaGenerationAdaptor._DEFAULT_ROLE_FIELDS:
+            field = default_role_field
+            example = 'xxx'
+            meeting_info_and_role_dict['role_name_list'].append({'role':field,'name':example})
 
         return meeting_info_and_role_dict
 
