@@ -111,8 +111,6 @@
     备稿点评1 3 备稿点评师1
     主持人串词 1 主持人
     备稿点评2 3 备稿点评师2
-    # 新会员入会仪式
-    新会员入会仪式 10 主席
     # 会议支持者报告
     主持人开场及中场串词 1 主持人
     时间官报告 2 时间官
@@ -130,23 +128,38 @@
     
                         <div class="form-group">
                             <div id="message"></div>
-                            <button type="button" id="submitButton" class="btn btn-primary btn-lg btn-block">生成议程表</button>
-                            <button type="button" id="downloadExcel" class="btn btn-info btn-lg btn-block">下载Excel表格</button>
-                            <button type="button" id="downloadPdf" class="btn btn-success btn-lg btn-block">导出PDF</button>
-    
+                            <div class="row mb-1">
+                                <div class="col">
+                                    <button type="button" id="submitButton" class="btn btn-primary btn-lg btn-block">生成议程表</button>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col">
+                                    <button type="button" id="previewImage" class="btn btn-success btn-lg btn-block">预览图片</button>
+                                </div>
+                                <div class="col">
+                                    <button type="button" id="downloadImage" class="btn btn-success btn-lg btn-block">导出图片</button>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col">
+                                    <button type="button" id="previewPdf" class="btn btn-success btn-lg btn-block">预览PDF</button>
+                                </div>
+                                <div class="col">
+                                    <button type="button" id="downloadPdf" class="btn btn-success btn-lg btn-block">导出PDF</button>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col">
+                                    <button type="button" id="downloadExcel" class="btn btn-info btn-lg btn-block">下载Excel表格</button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
                 
             </div>
         </div>
-
-        <!-- <center>
-            <span id="WaitingIcon" class="spinner-border spinner-border-sm" style="display: none;"></span>
-            <span id="WaitingTips" style="display: none;">&nbsp;&nbsp;正在操作</span>
-        </center> -->
-
-        
         
         <script>
               var HasSubmittedMessage = false;
@@ -288,7 +301,7 @@
         document.getElementById("downloadPdf").addEventListener("click", function() {
             if(HasSubmittedMessage == false){
                     $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先要生成议程表</div>');
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
                     $('#staticBackdrop').modal('show');
 
                     window.setTimeout(function(){
@@ -351,6 +364,203 @@
                         // $("#staticBackdropClose").trigger("click");
                         $("#staticBackdrop").modal('hide');
                     },1500);
+            });
+        });
+
+        document.getElementById("previewPdf").addEventListener("click", function() {
+            if(HasSubmittedMessage == false){
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                    // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                    return;
+                }
+
+            MaskUtil.mask();
+
+            fetch('./download_pdf', {
+                method: 'GET'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // If the response is successful, display the PDF in a new browser tab
+                    response.blob().then(blob => {
+                        var url = window.URL.createObjectURL(blob);
+
+                        // Open the PDF in a new browser tab
+                        window.open(url, '_blank');
+
+                        MaskUtil.unmask();
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览PDF版议程表成功</div>');
+                        $('#staticBackdrop').modal('show');
+
+                        window.setTimeout(function(){
+                            // $("#staticBackdropClose").trigger("click");
+                            $("#staticBackdrop").modal('hide');
+                        },1500);
+                    });
+                } else {
+                    console.error("Failed to retrieve PDF");
+
+                    MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览PDF版议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                MaskUtil.unmask();
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览PDF版议程表失败</div>');
+                $('#staticBackdrop').modal('show');
+
+                window.setTimeout(function(){
+                    // $("#staticBackdropClose").trigger("click");
+                    $("#staticBackdrop").modal('hide');
+                },1500);
+            });
+        });
+
+
+        document.getElementById("downloadImage").addEventListener("click", function() {
+            if(HasSubmittedMessage == false){
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                    // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                    return;
+                }
+
+            MaskUtil.mask();
+
+            // Send a GET request to the server to download the PDF
+            fetch('./export_image', {
+                method: 'GET'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // If the response is successful, trigger the download
+                    response.blob().then(blob => {
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'touma_club_agenda.jpg'; // You can set the desired filename here
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+
+                        MaskUtil.unmask();
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载图片议程表成功</div>');
+                        $('#staticBackdrop').modal('show');
+
+                        window.setTimeout(function(){
+                            $("#staticBackdrop").modal('hide');
+                        },1500);
+                    });
+                } else {
+                    console.error("Failed to download image");
+
+                    MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载图片议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载图片议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+            });
+        });
+
+        document.getElementById("previewImage").addEventListener("click", function() {
+            if(HasSubmittedMessage == false){
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                    // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                    return;
+                }
+
+            MaskUtil.mask();
+
+            fetch('./export_image', {
+                method: 'GET'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // If the response is successful, display the PDF in a new browser tab
+                    response.blob().then(blob => {
+                        var url = window.URL.createObjectURL(blob);
+
+                        // Open the PDF in a new browser tab
+                        window.open(url, '_blank');
+
+                        MaskUtil.unmask();
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览图片议程表成功</div>');
+                        $('#staticBackdrop').modal('show');
+
+                        window.setTimeout(function(){
+                            // $("#staticBackdropClose").trigger("click");
+                            $("#staticBackdrop").modal('hide');
+                        },1500);
+                    });
+                } else {
+                    console.error("Failed to preview image");
+
+                    MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览图片议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                MaskUtil.unmask();
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览图片议程表失败</div>');
+                $('#staticBackdrop').modal('show');
+
+                window.setTimeout(function(){
+                    // $("#staticBackdropClose").trigger("click");
+                    $("#staticBackdrop").modal('hide');
+                },1500);
             });
         });
 

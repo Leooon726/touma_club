@@ -58,14 +58,6 @@ def record_template():
     d = {'selected_template':session.get('selected_template')}
     return jsonify(data=d)
     
-@app.route('/GetContentBlockWithTemplate', methods=['POST'])
-def get_content_block_with_template():
-    session['selected_template'] = request.form.get('selected_template')
-    logger.debug(f"Set selected template: {session.get('selected_template')}")
-    output_directory = _get_or_create_output_file_directory()
-    logger.debug(f"output_directory: {output_directory}")
-    fields_dict = AgendaGenerationAdaptor.get_meeting_info_fields_dict(session.get('selected_template'),output_directory)
-    return render_template('InputAgendaContent.html',data=fields_dict)
 
 @app.route('/generate', methods=['POST'])
 def save_text():
@@ -127,35 +119,43 @@ def generate_with_text_blocks():
 
 @app.route('/export_image', methods=['GET'])
 def export_image():
-    if 'output_pdf_file_path' not in session:
+    if ('output_pdf_file_path' not in session) or (not os.path.exists(session.get('output_pdf_file_path'))):
+        logger.debug('output_pdf_file_path does not exist, generating pdf.')
         pdf_path = _export_pdf()
     else:
-        pdf_path = session['output_pdf_file_path']
+        logger.debug(f"output_pdf_file_path exists, at {session.get('output_pdf_file_path')}")
+        pdf_path = session.get('output_pdf_file_path')
 
-    output_image_file_path = os.path.join(session['output_directory'],'exported_agenda.jpg')
+    output_image_file_path = os.path.join(session.get('output_directory'),'exported_agenda.jpg')
     command = [
         "convert",
         "-density", "300",
         "-quality", "100",
         "-units", "PixelsPerInch",
-        pdf_path,
+        "-flatten",
+        pdf_path + "[0]", # Only convert the first page.
         output_image_file_path
     ]
 
-    subprocess.run(command)
+    logger.debug(f"Executing command: {' '.join(command)}")  # Print the command being executed
+    try:
+        completed_process = subprocess.run(command, capture_output=True, text=True)
+        if completed_process.returncode != 0:
+            error_message = completed_process.stderr.strip()
+            logger.error(f"Error occurred during command execution: {error_message}")
+    except Exception as e:
+        logger.error(f"An error occurred while executing the command: {str(e)}")
+
     logger.debug(f"Image created in {output_image_file_path}")
-    response_data = {'image_path':output_image_file_path}
-    return jsonify(response_data)
+    return send_file(output_image_file_path, as_attachment=True)
 
 
 def _export_pdf():
     input_excel_file_path = session.get('output_excel_file_path')
-    # output_pdf_file_path = os.path.join(session.get('output_directory'),'exported_agenda.pdf')
     output_pdf_file_path = input_excel_file_path.replace('xlsx','pdf')
     session['output_pdf_file_path'] = output_pdf_file_path
 
     # Run the unoconv command to convert the input Excel file to PDF
-    # convert_command = ['unoconv', '-f', 'pdf', '-o', output_pdf_file_path, input_excel_file_path]
     convert_command = ['libreoffice','--convert-to','pdf','--outdir',session.get('output_directory'),input_excel_file_path]
     logger.debug(f"Executing command: {' '.join(convert_command)}")  # Print the command being executed
 
@@ -178,8 +178,7 @@ def download_excel():
 @app.route('/download_pdf', methods=['GET'])
 def export_pdf():
     output_pdf_file_path = _export_pdf()
-    # response_data = {'pdf_path':output_pdf_file_path}
-    return send_file(output_pdf_file_path, as_attachment=True)
+    return send_file(output_pdf_file_path, as_attachment=False)
 
 
 if __name__ == '__main__':
