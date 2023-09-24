@@ -76,32 +76,36 @@
                     const submitButton = document.getElementById("submitButton");
                 
                     submitButton.addEventListener("click", function() {
-                        MaskUtil.mask();
+                    MaskUtil.mask();
 
-                        const selectedTemplate = templateSelect.value;
-                        const formData = new FormData();
-                        formData.append("selected_template", selectedTemplate);
-                        fetch("./set_selected_template", {
-                            method: "POST",
-                            body: formData
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                return response.json(); // Assuming the response is in JSON format
-                            } else {
-                                throw new Error("Error: " + response.status);
-                            }
-                        })
-                        .then(data => {
-                            // Handle the response data here
-                            console.log(data);
-                        })
-                        .catch(error => {
-                            // Handle any errors that occurred during the request
-                            console.error("Error:", error);
-                        });
+                    const selectedTemplate = templateSelect.value;
+                    const formData = new FormData();
+                    formData.append("selected_template", selectedTemplate);
+                    
+                    fetch("./set_selected_template", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log(response); // Add this line to check the response
+                        
+                        if (response.ok) {
+                            return response.json(); // Assuming the response is in JSON format
+                        } else {
+                            throw new Error("Error: " + response.status);
+                        }
+                    })
+                    .then(data => {
+                        // Handle the response data here
+                        console.log(data);
+                        // Redirect to the desired location after successful response
                         window.location = "./InputAgendaContent";
+                    })
+                    .catch(error => {
+                        // Handle any errors that occurred during the request
+                        console.error("Error:", error);
                     });
+                });
 
 
 /**

@@ -40,12 +40,14 @@
     </head>
 
     <body>
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered"">
+        <!-- 提交数据后显示结果的模态框 -->
+        <!-- data-bs-backdrop="static" data-bs-keyboard="false" -->
+        <div class="modal fade" id="staticBackdrop"  tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">提交结果</h5>
-                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                        <h5 class="modal-title" id="staticBackdropLabel">生成结果</h5>
+                        <!-- <button type="button" id="staticBackdropClose" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                       </div>
                       <div class="modal-body" id="Submitted_Content">
                         
@@ -128,9 +130,9 @@
     
                         <div class="form-group">
                             <div id="message"></div>
-                            <button type="button" id="submitButton" class="btn btn-primary btn-lg btn-block">提交数据</button>
-                            <button type="button" id="previewImage" class="btn btn-info btn-lg btn-block">预览文件</button>
-                            <button type="button" id="downloadPdf" class="btn btn-success btn-lg btn-block">下载文件</button>
+                            <button type="button" id="submitButton" class="btn btn-primary btn-lg btn-block">生成议程表</button>
+                            <button type="button" id="downloadExcel" class="btn btn-info btn-lg btn-block">下载Excel表格</button>
+                            <button type="button" id="downloadPdf" class="btn btn-success btn-lg btn-block">导出PDF</button>
     
                         </div>
                     </form>
@@ -147,6 +149,8 @@
         
         
         <script>
+              var HasSubmittedMessage = false;
+
             $(document).ready(function() {
               // Event listener for the submit button click
               $('#submitButton').click(function() {
@@ -180,48 +184,122 @@
 
                     // Pop a message to notify the user.
                     $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<p> 数据提交成功 </p>');
-                    $('#staticBackdrop').modal();
+                    $('#Submitted_Content').append('<div class="alert alert-success" role="alert"> 议程表生成成功 </div>');
+                    $('#staticBackdrop').modal('show');
 
                     // Close modal automatically
-                    // window.setTimeout(function(){
-                    //     $("#staticBackdrop").hide();
-                    // },1500);
+                    window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+
+                    HasSubmittedMessage = true;
                   },
                   error: function(error) {
                     // Handle any errors that occur during the request
                     console.error('Error:', error);
                     // Display an error message to the user
-                    $('#message').html('<p>Error occurred: ' + error.statusText + '</p>');
+                    // $('#message').html('<p>Error occurred: ' + error.statusText + '</p>');
+
+                    MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert"> '+ error.statusText +' </div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
                   }
                 });
               });
             });
 
             // Add JavaScript code to send a request to the Flask route when the button is clicked
-            document.getElementById("previewImage").addEventListener("click", function() {
+            document.getElementById("downloadExcel").addEventListener("click", function() {
+                if(HasSubmittedMessage == false){
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先要生成议程表</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                    // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                    return;
+                }
+
+                MaskUtil.mask();
+
             // Send a GET request to the '/export_image' route
-            fetch('./export_image', {
+            fetch('./download_excel', {
                 method: 'GET'
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Image path:", data.image_path);
-                // Create an img element
-                var imgElement = document.createElement("img");
+            .then(response => {
+                if (response.ok) {
+                    // If the response is successful, trigger the download
+                    response.blob().then(blob => {
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'touma_club_agenda.xlsx'; // You can set the desired filename here
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
 
-                // Set the src attribute to the image path from the server
-                imgElement.src = data.image_path;
+                        MaskUtil.unmask();
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载Excel版议程表成功</div>');
+                        $('#staticBackdrop').modal('show');
 
-                // Append the img element to the imageContainer
-                document.getElementById("imageContainer").appendChild(imgElement);
+                        window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                            $("#staticBackdrop").modal('hide');
+                        },1500);
+                    });
+                } else {
+                    console.error("Failed to download EXCEL");
+                    
+                    MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                }
             })
             .catch(error => {
                 console.error("Error:", error);
+
+                MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
             });
         });
 
         document.getElementById("downloadPdf").addEventListener("click", function() {
+            if(HasSubmittedMessage == false){
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先要生成议程表</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                    // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
+                    return;
+                }
+
+            MaskUtil.mask();
+
             // Send a GET request to the server to download the PDF
             fetch('./download_pdf', {
                 method: 'GET'
@@ -237,13 +315,42 @@
                         document.body.appendChild(a);
                         a.click();
                         window.URL.revokeObjectURL(url);
+
+                        MaskUtil.unmask();
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载PDF版议程表成功</div>');
+                        $('#staticBackdrop').modal('show');
+
+                        window.setTimeout(function(){
+                            // $("#staticBackdropClose").trigger("click");
+                            $("#staticBackdrop").modal('hide');
+                        },1500);
                     });
                 } else {
                     console.error("Failed to download PDF");
+
+                    MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载PDF版议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
                 }
             })
             .catch(error => {
                 console.error("Error:", error);
+                MaskUtil.unmask();
+                    $('#Submitted_Content').empty();
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载PDF版议程表失败</div>');
+                    $('#staticBackdrop').modal('show');
+
+                    window.setTimeout(function(){
+                        // $("#staticBackdropClose").trigger("click");
+                        $("#staticBackdrop").modal('hide');
+                    },1500);
             });
         });
 
@@ -255,7 +362,7 @@
  */
 var MaskUtil = (function(){
     var $mask,$maskMsg;
-    var defMsg = '正在处理，请稍等。。。';
+    var defMsg = '正在生成，请稍等 . . .';
     function init(){
         if(!$mask){
             $mask = $("<div id=\"myWaitingModal\" class=\"modal fade\" data-keyboard=\"false\" data-backdrop=\"static\" data-role=\"dialog\" " +

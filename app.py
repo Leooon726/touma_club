@@ -23,8 +23,8 @@ with open('/home/lighthouse/touma_club/app_config.yaml', 'r') as config_file:
 
 
 def _get_or_create_output_file_directory():
-    if 'output_directory' in session:
-        return session['output_directory']
+    if 'output_directory' in session and os.path.exists(session.get('output_directory')):
+        return session.get('output_directory')
     # Create a filename that includes datetime and the token
     current_datetime = datetime.now().strftime("%Y%m%d%H%M%S")
     token = secrets.token_hex(2)[:3]
@@ -45,10 +45,26 @@ def select_template():
 @app.route('/InputAgendaContent')
 def input_agenda_content():
     selected_template = session.get('selected_template')
-    logger.debug(f"Selected template: {selected_template}")
+    logger.debug(f"In InputAgendaContent, selected template: {selected_template}")
     output_directory = _get_or_create_output_file_directory()
     logger.debug(f"output_directory: {output_directory}")
     fields_dict = AgendaGenerationAdaptor.get_meeting_info_fields_dict(selected_template,output_directory)
+    return render_template('InputAgendaContent.html',data=fields_dict)
+
+@app.route('/set_selected_template', methods=['POST'])
+def record_template():
+    session['selected_template'] = request.form.get('selected_template')
+    logger.debug(f"Set selected template: {session.get('selected_template')}")
+    d = {'selected_template':session.get('selected_template')}
+    return jsonify(data=d)
+    
+@app.route('/GetContentBlockWithTemplate', methods=['POST'])
+def get_content_block_with_template():
+    session['selected_template'] = request.form.get('selected_template')
+    logger.debug(f"Set selected template: {session.get('selected_template')}")
+    output_directory = _get_or_create_output_file_directory()
+    logger.debug(f"output_directory: {output_directory}")
+    fields_dict = AgendaGenerationAdaptor.get_meeting_info_fields_dict(session.get('selected_template'),output_directory)
     return render_template('InputAgendaContent.html',data=fields_dict)
 
 @app.route('/generate', methods=['POST'])
@@ -76,17 +92,6 @@ def save_text():
         return render_template('index.html', default_text='', message='生成失败')
 
 
-@app.route('/set_selected_template', methods=['POST'])
-def record_template():
-    session['selected_template'] = request.form.get('selected_template')
-    logger.debug(f"Selected template: {session['selected_template']}")
-    return ''
-
-    # output_directory = _get_or_create_output_file_directory()
-    # fields_dict = AgendaGenerationAdaptor.get_meeting_info_fields_dict(session['selected_template'],output_directory)
-    # return jsonify(data=fields_dict, ensure_ascii=False)
-
-
 @app.route('/generate_with_text_blocks', methods=['POST'])
 def generate_with_text_blocks():
     # Receive a post with json string, dump it into .json file.
@@ -108,7 +113,7 @@ def generate_with_text_blocks():
 
     # TODO: support input .json file as input file.
     # TODO: make -c configable. use session['template_name'] to get the right engine_config.yaml
-    engine_config_path = AgendaGenerationAdaptor.template_name_to_config_path(session['selected_template'])
+    engine_config_path = AgendaGenerationAdaptor.template_name_to_config_path(session.get('selected_template'))
     command = f"/home/lighthouse/.pyenv/shims/python3 /home/lighthouse/tm_meeting_assistant/main.py -i {user_input_file_path} -o {output_excel_file_path} -c {engine_config_path}"
     try:
         subprocess.run(command, shell=True, check=True)
@@ -117,7 +122,6 @@ def generate_with_text_blocks():
 
     logger.debug(f"Generated excel in {output_excel_file_path}")
 
-    # return send_file(output_excel_file_path, as_attachment=True)
     return jsonify(response_data)
 
 
@@ -145,20 +149,31 @@ def export_image():
 
 
 def _export_pdf():
-    input_excel_file_path = session['output_excel_file_path']
-    output_pdf_file_path = os.path.join(session['output_directory'],'exported_agenda.pdf')
+    input_excel_file_path = session.get('output_excel_file_path')
+    # output_pdf_file_path = os.path.join(session.get('output_directory'),'exported_agenda.pdf')
+    output_pdf_file_path = input_excel_file_path.replace('xlsx','pdf')
     session['output_pdf_file_path'] = output_pdf_file_path
 
     # Run the unoconv command to convert the input Excel file to PDF
-    unoconv_command = ['unoconv', '-f', 'pdf', '-o', output_pdf_file_path, input_excel_file_path]
-    subprocess.run(unoconv_command)
+    # convert_command = ['unoconv', '-f', 'pdf', '-o', output_pdf_file_path, input_excel_file_path]
+    convert_command = ['libreoffice','--convert-to','pdf','--outdir',session.get('output_directory'),input_excel_file_path]
+    logger.debug(f"Executing command: {' '.join(convert_command)}")  # Print the command being executed
+
+    try:
+        completed_process = subprocess.run(convert_command, capture_output=True, text=True)
+        if completed_process.returncode != 0:
+            error_message = completed_process.stderr.strip()
+            logger.error(f"Error occurred during command execution: {error_message}")
+    except Exception as e:
+        logger.error(f"An error occurred while executing the command: {str(e)}")
+
+    logger.debug(f"PDF generated in {output_pdf_file_path}")
     return output_pdf_file_path
 
-# @app.route('/export_pdf', methods=['GET'])
-# def export_pdf():
-#     output_pdf_file_path = _export_pdf()
-#     response_data = {'pdf_path':output_pdf_file_path}
-#     return jsonify(response_data)
+@app.route('/download_excel', methods=['GET'])
+def download_excel():
+    excel_file_path = session.get('output_excel_file_path')
+    return send_file(excel_file_path, as_attachment=True)
 
 @app.route('/download_pdf', methods=['GET'])
 def export_pdf():
