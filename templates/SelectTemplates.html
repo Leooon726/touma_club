@@ -46,17 +46,21 @@
             align-items: center;
             background-color: #f1f1f1;
             padding: 5px; /* Adjust the padding to reduce the height */
+            justify-content: center; /* Center the content horizontally */
         }
-    
-      .navbar-icon{
+
+        .navbar-icon {
             margin-right: 5px; /* Adjust the margin to your preferred spacing */
             font-size: 20px; /* Adjust the font size to your preferred value */
         }
+
         .navbar-title {
             font-weight: bold;
             font-size: 20px; /* Adjust the font size to your preferred value */
+            flex-grow: 1; /* Allow the title to take up remaining space */
+            text-align: center; /* Center the text within the title */
         }
-    
+
         .navbar-icon:last-child {
             margin-right: 0;
             z-index: 1000; /* Set a high z-index to place it on top */
