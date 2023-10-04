@@ -5,29 +5,6 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> <!--防止移动端缩放-->
         <title></title>
-
-        <style type="text/css">
-
-            .loading {
-                width: 250px;
-                height: 56px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin: -28px 0px 0px -125px;
-                line-height: 56px;
-                color: #fff;
-                padding-left: 60px;
-                font-size: 12px;
-                background: #000 url(../static/imgs/waiting.gif) no-repeat 10px 50%;
-                opacity: 0.7;
-                z-index: 9999;
-                -moz-border-radius: 20px;
-                -webkit-border-radius: 20px;
-                border-radius: 20px;
-                filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
-            }
-                </style>
                 <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
             <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
                 <!--jQuery cdn链接-->
@@ -37,9 +14,21 @@
                 <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"> -->
 
-    </head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/LoadingBox.css">
+</head>
 
     <body>
+        <div class="navbar">
+            <a href="./">
+                <i class="fas fa-home navbar-icon"></i>
+            </a>
+            <h1 class="navbar-title">议程表助手</h1>
+            <!-- <i class="fas fa-bars navbar-icon" id="menuIcon"></i> -->
+        </div>
+
         <!-- 提交数据后显示结果的模态框 -->
         <!-- data-bs-backdrop="static" data-bs-keyboard="false" -->
         <div class="modal fade" id="staticBackdrop"  tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -58,14 +47,6 @@
         </div>
 
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <fieldset style="text-align: center;">
-                        <legend>议程表助手</legend>
-                    </fieldset>
-                </div>
-                
-            </div>
             <div class="row">
                 <div class="col-12">
                     <form>
@@ -133,7 +114,8 @@
 # 会议结束</textarea>
                             
                         </div>
-    
+
+
                         <div class="form-group">
                             <div id="message"></div>
                             <div class="row mb-1">
@@ -251,60 +233,61 @@
 
                 MaskUtil.mask();
 
-            // Send a GET request to the '/export_image' route
-            fetch('./download_excel', {
-                method: 'GET'
-            })
-            .then(response => {
-                if (response.ok) {
-                    // If the response is successful, trigger the download
-                    response.blob().then(blob => {
-                        var url = window.URL.createObjectURL(blob);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'touma_club_agenda.xlsx'; // You can set the desired filename here
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
+                // Send a GET request to the '/export_image' route
+                fetch('./download_excel', {
+                    method: 'GET'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // If the response is successful, trigger the download
+                        response.blob().then(blob => {
+                            var url = window.URL.createObjectURL(blob);
+                            var a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'touma_club_agenda.xlsx'; // You can set the desired filename here
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
 
+                            MaskUtil.unmask();
+                            $('#Submitted_Content').empty();
+                            $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载Excel版议程表成功</div>');
+                            $('#staticBackdrop').modal('show');
+
+                            window.setTimeout(function(){
+                                // $("#staticBackdropClose").trigger("click");
+                                $("#staticBackdrop").modal('hide');
+                            },1500);
+                        });
+                    } 
+                    else {
+                        console.error("Failed to download EXCEL");
+                    
                         MaskUtil.unmask();
                         $('#Submitted_Content').empty();
-                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载Excel版议程表成功</div>');
+                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
+                        $('#staticBackdrop').modal('show');
+
+                       window.setTimeout(function(){
+                            // $("#staticBackdropClose").trigger("click");
+                            $("#staticBackdrop").modal('hide');
+                        },1500);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+
+                    MaskUtil.unmask();
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
                         $('#staticBackdrop').modal('show');
 
                         window.setTimeout(function(){
-                        // $("#staticBackdropClose").trigger("click");
+                            // $("#staticBackdropClose").trigger("click");
                             $("#staticBackdrop").modal('hide');
                         },1500);
-                    });
-                } else {
-                    console.error("Failed to download EXCEL");
-                    
-                    MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function(){
-                        // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-
-                MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function(){
-                        // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
+                });
             });
-        });
 
         document.getElementById("downloadPdf").addEventListener("click", function() {
             if(HasSubmittedMessage == false){
@@ -440,7 +423,6 @@
             });
         });
 
-
         document.getElementById("downloadImage").addEventListener("click", function() {
             if(HasSubmittedMessage == false){
                     $('#Submitted_Content').empty();
@@ -571,6 +553,176 @@
                 },1500);
             });
         });
+
+        //Add Meeting Session
+        document.getElementById("MeetingSession_Add").addEventListener("click", function(){
+            GetRoleSelect();
+        })
+
+        function CreateSessionElement(data){
+            if(jQuery.isEmptyObject(data)){
+                data = {Index: 0, Title: "", ChildSessions: []};
+            }
+
+            //Get New Session ID
+            let MeetingSessions_Count = $("#MeetingSession").children().length; //Get Current Sessions Length
+            let NewSessionIndex = MeetingSessions_Count+1;
+            let NewSessionID = "Session_"+NewSessionIndex;  //Get New Sessions ID
+
+            //Add Title
+            let Span_SessionNum = $("<span></span>");
+            Span_SessionNum.addClass("input-group-text");
+            Span_SessionNum.text(data.Index);
+
+            let Input_SessionName = $("<input />");
+            Input_SessionName.attr("type", "text");
+            Input_SessionName.addClass("form-control");
+            if(data.Title === "")
+                Input_SessionName.attr("placeholder", "请输入环节名称");
+            else
+                Input_SessionName.attr("value", data.Title);
+
+
+            let Button_ChildSession_Add = GetButtonDom("info", "添加子环节");
+            let Button_Session_Up = GetButtonDom("primary", "上移本环节");
+            let Button_Session_Down = GetButtonDom("warning", "下移本环节");
+            let Button_Session_Del = GetButtonDom("danger", "删除本环节");
+
+            let DivRow_InputGroup = GetDivDom();
+            DivRow_InputGroup.addClass("input-group mb-3");
+            Span_SessionNum.appendTo(DivRow_InputGroup);
+            Input_SessionName.appendTo(DivRow_InputGroup);
+            Button_ChildSession_Add.appendTo(DivRow_InputGroup);
+            Button_Session_Up.appendTo(DivRow_InputGroup);
+            Button_Session_Down.appendTo(DivRow_InputGroup);
+            Button_Session_Del.appendTo(DivRow_InputGroup);
+
+            //Add Table
+            //Add thead
+            let th_Child_Num = GetThDom("序号");
+            let th_Child_SessionName = GetThDom("子环节名称");
+            let th_Child_Duration = GetThDom("子环节时间");
+            let th_Child_Role = GetThDom("选择角色");
+            let th_Child_Operation = GetThDom("子环节操作");
+
+            let thtrDom = $("<tr></tr>");
+            th_Child_Num.appendTo(thtrDom);
+            th_Child_SessionName.appendTo(thtrDom);
+            th_Child_Duration.appendTo(thtrDom);
+            th_Child_Role.appendTo(thtrDom);
+            th_Child_Operation.appendTo(thtrDom);
+
+            let theadDom = $("<thead></thead>");
+            thtrDom.appendTo(theadDom);
+
+            let Table = $("<table></table>");
+            Table.addClass("table table-success table-bordered table-striped");
+            theadDom.appendTo(Table);
+
+            //Add tbody
+            if(data.ChildSessions.length > 0){
+                let tbodyDom = $("<tbody></tbody");
+                for(let i = 0;i < data.ChildSessions.length;i++){
+                    //Num
+                    let ChildNumCol = $("<th scope=\"row\">"+data.ChildSessions[i].ChildIndex+"</th>")
+                    
+                    //Children Session Name
+                    let ChildSession_Name = $("<input type=\"text\"  class=\"form-control\" />")
+                    if(data.ChildSessions[i].Name == "")
+                        ChildSession_Name.attr("placeholder", "请输入子环节名称");
+                    else
+                        ChildSession_Name.attr("value", data.ChildSessions[i].Name);
+                    let TD_Name = $("<td></td>");
+                    ChildSession_Name.appendTo(TD_Name);
+
+                    //Children Session Duration
+                    let ChildSession_Duration = $("<input type=\"text\"  class=\"form-control\" />")
+                    if(data.ChildSessions[i].Duration == "")
+                        ChildSession_Duration.attr("placeholder", "请输入子环节名称");
+                    else
+                        ChildSession_Duration.attr("value", data.ChildSessions[i].Duration);
+                    let TD_Duration = $("<td></td>");
+                    ChildSession_Duration.appendTo(TD_Duration);
+
+                    //Children Session Role
+                    let ChildSession_Role = GetRoleSelect(data.ChildSessions[i].Role);
+                    let TD_Role = $("<td></td>");
+                    ChildSession_Role.appendTo(TD_Role);
+
+                    let tbtrDom = $("<tr></tr>");
+                    ChildNumCol.appendTo(tbtrDom);
+                    TD_Name.appendTo(tbtrDom);
+                    TD_Duration.appendTo(tbtrDom);
+                    TD_Role.appendTo(tbtrDom);
+
+                    tbtrDom.appendTo(tbodyDom);
+                }
+
+                tbodyDom.appendTo(Table);
+
+            }
+
+            //Add Container
+            let DivContainer = GetDivDom();
+            DivContainer.attr("id", NewSessionID);
+            DivContainer.addClass("bd-example"); //container-fluid
+            // DivRow_Title.appendTo(DivContainer);
+            DivRow_InputGroup.appendTo(DivContainer);
+            Table.appendTo(DivContainer);
+
+            let DivFormItem = $("#MeetingSession");
+            DivContainer.appendTo(DivFormItem);
+        }
+
+        function GetDivDom(){
+            let div = $("<div></div>");
+            return div;
+        }
+
+        function GetButtonDom(color, name){
+            let button = $("<button></button>");
+            button.attr("type", "button");
+            // button.attr("id", ID);
+
+            let className = "btn btn-"+color;
+            button.addClass(className);
+            button.text(name);
+
+            return button;
+        }
+
+        function GetThDom(colName){
+            let thDom = $("<th>"+colName+"</th>");
+            thDom.attr("scope", "col");
+            thDom.attr("style", "style=\"text-align: center;\"");
+            return thDom;
+        }
+
+        //Get Role Select
+        function GetRoleSelect(SelectedRole){
+            let RoleData = $("#role_name_list").text();
+            // console.log(RoleData);
+
+            let SelectDom = $("<select class=\"form-control\"></select>");
+            let OptionsDom_Default = $("<option value=\"\">请选择角色</option>");
+            OptionsDom_Default.appendTo(SelectDom);
+
+            let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
+            for(let r = 0;r < RoleArr.length;r++){
+                if(RoleArr[i] != ""){
+                    let role = $.trim(RoleArr[i].split(':')[0]);
+                    let OptionStr_Role = "<option value=\""+role+"\"";
+                    if(RoleArr[i] == SelectedRole)
+                        OptionStr_Role += " selected"
+                    OptionStr_Role += ">"+role+"</option>";
+
+                    let OptionDom_Role = $(OptionStr_Role);
+                    OptionDom_Role.appendTo(SelectDom);
+                }
+            }
+
+            return SelectDom;
+        }
 
         /**
  * 说明：数据进行加载时的遮罩层，基于bootstrap的页面模态框做封装处理
