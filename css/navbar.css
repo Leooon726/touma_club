@@ -1,0 +1,49 @@
+/* CSS styles for the navigation bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f1f1f1;
+    padding: 5px; /* Adjust the padding to reduce the height */
+    justify-content: center; /* Center the content horizontally */
+}
+
+.navbar-icon {
+    margin-right: 5px; /* Adjust the margin to your preferred spacing */
+    font-size: 20px; /* Adjust the font size to your preferred value */
+}
+
+.navbar-title {
+    font-weight: bold;
+    font-size: 20px; /* Adjust the font size to your preferred value */
+    flex-grow: 1; /* Allow the title to take up remaining space */
+    text-align: center; /* Center the text within the title */
+}
+
+.navbar-icon:last-child {
+    margin-right: 0;
+    z-index: 1000; /* Set a high z-index to place it on top */
+}
+
+/* CSS styles for the container below the navbar */
+.container-fluid {
+    margin-top: 20px; /* Adjust the margin value to your preferred spacing */
+}
+
+.menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100vh;
+    z-index: 900;
+    overflow-y: auto; /* Add overflow-y property to enable scrolling if needed */
+}
+
+.menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(203, 126, 126);
+    display: none;
+}
