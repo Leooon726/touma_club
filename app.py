@@ -15,7 +15,7 @@ log_file = 'app.log'
 logging.basicConfig(filename=log_file, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__,static_folder='css',template_folder='templates')
+app = Flask(__name__,static_folder='static',template_folder='templates')
 app.secret_key = 'touma_club' # secrets.token_hex(16)
 # Load configuration from YAML file
 with open('/home/lighthouse/touma_club/app_config.yaml', 'r') as config_file:
