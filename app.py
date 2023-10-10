@@ -112,6 +112,10 @@ def generate_with_text_blocks():
     except subprocess.CalledProcessError as e:
         print("Error:", e)
 
+    # If the agenda is regenerated, clear the stale pdf path to avoid generate image with the stale pdf file.
+    if 'output_pdf_file_path' in session:
+        session.pop('output_pdf_file_path')
+    session.modified = True
     logger.debug(f"Generated excel in {output_excel_file_path}")
 
     return jsonify(response_data)
