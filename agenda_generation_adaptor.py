@@ -33,8 +33,9 @@ class AgendaGenerationAdaptor():
         for field_and_example_dict in fields_dict:
             field = field_and_example_dict['field_name']
             example = field_and_example_dict['example'] if 'example' in field_and_example_dict else ''
+            is_single_line = field_and_example_dict['is_single_line'] if ('is_single_line' in field_and_example_dict) else True
             if not AgendaGenerationAdaptor._is_role_field(field):
-                meeting_info_and_role_dict['meeting_info'].append({'field_name':field,'content':example})
+                meeting_info_and_role_dict['meeting_info'].append({'field_name':field,'content':example,'is_single_line':is_single_line})
 
         for default_role_field in AgendaGenerationAdaptor._DEFAULT_ROLE_FIELDS:
             field = default_role_field

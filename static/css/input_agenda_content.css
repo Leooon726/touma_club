@@ -1,6 +1,10 @@
 .field-label {
     display: inline-block;
-    width: 150px; /* Adjust the width as per your preference */
-    text-align: right;
-    margin-right: 10px;
+    width: 100px;
+    text-align: left;
+}
+
+.field-label-centered {
+    display: flex;
+    align-items: center;
 }
