@@ -1,0 +1,6 @@
+.field-label {
+    display: inline-block;
+    width: 150px; /* Adjust the width as per your preference */
+    text-align: right;
+    margin-right: 10px;
+}
