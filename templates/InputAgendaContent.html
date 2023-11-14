@@ -1,72 +1,79 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> <!--防止移动端缩放-->
-        <title></title>
-                <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-            <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
-            <!-- Bootstrap-Select CSS 文件 -->
-            <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.css" rel="stylesheet">
-                <!--jQuery cdn链接-->
-                <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-              <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-                <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-                <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"> -->
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!--防止移动端缩放-->
+    <title></title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Bootstrap-Select CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.css" rel="stylesheet">
+    <!--jQuery cdn链接-->
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"> -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
 
     <link rel="stylesheet" href="static/css/navbar.css">
     <link rel="stylesheet" href="static/css/LoadingBox.css">
     <link rel="stylesheet" href="static/css/input_agenda_content.css">
 </head>
 
-    <body>
-        <div class="navbar">
-            <a href="./">
-                <i class="fas fa-home navbar-icon"></i>
-            </a>
-            <h1 class="navbar-title">议程表助手</h1>
-            <!-- <i class="fas fa-bars navbar-icon" id="menuIcon"></i> -->
-        </div>
+<body>
+    <div class="navbar">
+        <a href="./">
+            <i class="fas fa-home navbar-icon"></i>
+        </a>
+        <h1 class="navbar-title">议程表助手</h1>
+        <!-- <i class="fas fa-bars navbar-icon" id="menuIcon"></i> -->
+    </div>
 
-        <!-- 提交数据后显示结果的模态框 -->
-        <!-- data-bs-backdrop="static" data-bs-keyboard="false" -->
-        <div class="modal fade" id="staticBackdrop"  tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">生成结果</h5>
-                        <!-- <button type="button" id="staticBackdropClose" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                      </div>
-                      <div class="modal-body" id="Submitted_Content">
-                        
-                      </div>
+    <!-- 提交数据后显示结果的模态框 -->
+    <!-- data-bs-backdrop="static" data-bs-keyboard="false" -->
+    <div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">生成结果</h5>
+                    <!-- <button type="button" id="staticBackdropClose" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
-            
-            </div>
-        </div>
+                <div class="modal-body" id="Submitted_Content">
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <form>
-                        <div class="form-group">
-                            <label for="meeting_info">会议信息</label>
-                            {% for item in data['meeting_info'] %}
-                            <div class="input-group">
-                                <p class="field-label field-label-centered">{{ item['field_name'] }}</p>
-                                {% if item['is_single_line'] %}
-                                    <input type="text" id="{{ item['field_name'] }}" class="form-control input-centered" name="{{ item['field_name'] }}" value="{{ item['content'] }}" placeholder="{{ item['field_name'] }}" />
-                                {% else %}
-                                    <textarea id="{{ item['field_name'] }}" class="form-control input-centered" name="{{ item['field_name'] }}" placeholder="{{ item['field_name'] }}">{{ item['content'] }}</textarea>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <form>
+                    <div class="form-group">
+                        <!-- <label for="meeting_info">会议信息</label> -->
+                        {% for item in data['meeting_info'] %}
+                        <div class="input-group">
+                            <p class="field-label field-label-centered">{{ item['field_name'] }}</p>
+                            {% if item['is_single_line'] %}
+                            <input type="text" id="{{ item['field_name'] }}" class="form-control input-centered"
+                                name="{{ item['field_name'] }}" value="{{ item['content'] }}"
+                                placeholder="{{ item['field_name'] }}" />
+                            {% else %}
+                            <textarea id="{{ item['field_name'] }}" class="form-control input-centered"
+                                name="{{ item['field_name'] }}"
+                                placeholder="{{ item['field_name'] }}">{{ item['content'] }}</textarea>
+                            {% endif %}
                         </div>
-                        <!-- <div class="form-group">
+                        {% endfor %}
+                    </div>
+                    <!-- <div class="form-group">
                             <label for="meeting_info">会议信息</label>
                             {% for item in data['meeting_info'] %}
                             <div class="input-group">
@@ -75,16 +82,18 @@
                             </div>
                             {% endfor %}
                         </div> -->
-    
-                        <div class="form-group">
-                            <label for="role_name_list">会议角色及人员</label>
-                            <textarea id="role_name_list" class="form-control" name="role_name_list" rows="8" placeholder="请输入会议角色及对应人名">{% for item in data['role_name_list'] %}
+
+                    <div class="form-group">
+                        <label for="role_name_list">会议角色及人员</label>
+                        <textarea id="role_name_list" class="form-control" name="role_name_list" rows="8"
+                            placeholder="请输入会议角色及对应人名">{% for item in data['role_name_list'] %}
     {{ item['role'] }}: {{ item['name'] }}{% if not loop.last %} {% endif %}{% endfor %}</textarea>
-                        </div>
-    
-                        <div class="form-group">
-                            <label for="">议程安排</label>
-                            <textarea id="agenda_content" class="form-control" name="agenda_content" rows="18" placeholder=""># 会议开场
+                    </div>
+
+                    <!-- <div class="form-group">
+                        <label for="">议程安排</label>
+                        <textarea id="agenda_content" class="form-control" name="agenda_content" rows="18"
+                            placeholder=""># 会议开场
 主持人开场白(介绍会议主要内容、及可能的议程改动) 1 主持人
 介绍会议规则以及宾客介绍（限时每位30秒） 2 礼宾师
 介绍国际演讲会及捷普聚思国际演讲俱乐部 5 主席
@@ -132,70 +141,125 @@
 会议招募 1 下一期会议经理
 
 # 会议结束</textarea>
-                            
-                        </div>
 
-                        <div class="form-group">
-                            <label for="">议程安排（表格）</label>
-                            <!-- <button type="button" id="MeetingSession_Add" class="btn btn-info">添加会议环节</button> -->
-                        </div>
+                    </div> -->
 
-                        <div class="form-group" id="MeetingSession">
+                    <div class="form-group">
+                        <label for="">议程安排</label>
+                        <!-- <button type="button" id="MeetingSession_Add" class="btn btn-info">添加会议环节</button> -->
+                    </div>
 
-                        </div>
+                    <div class="form-group" id="MeetingSession">
 
-                        <div class="form-group">
-                            <div id="message"></div>
-                            <div class="row mb-1">
-                                <div class="col">
-                                    <button type="button" id="MeetingSession_Add" class="btn btn-info btn-lg btn-block">添加会议环节</button>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="col">
-                                    <button type="button" id="submitButton" class="btn btn-primary btn-lg btn-block">生成议程表</button>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="col">
-                                    <button type="button" id="previewImage" class="btn btn-success btn-lg btn-block">预览图片</button>
-                                </div>
-                                <div class="col">
-                                    <button type="button" id="downloadImage" class="btn btn-success btn-lg btn-block">导出图片</button>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="col">
-                                    <button type="button" id="previewPdf" class="btn btn-success btn-lg btn-block">预览PDF</button>
-                                </div>
-                                <div class="col">
-                                    <button type="button" id="downloadPdf" class="btn btn-success btn-lg btn-block">导出PDF</button>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="col">
-                                    <button type="button" id="downloadExcel" class="btn btn-info btn-lg btn-block">下载Excel表格</button>
-                                </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div id="message"></div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <button type="button" id="MeetingSession_Add"
+                                    class="btn btn-info btn-lg btn-block">添加会议环节</button>
                             </div>
                         </div>
-                    </form>
-                </div>
-                
+                        <div class="row mb-1">
+                            <div class="col">
+                                <button type="button" id="submitButton"
+                                    class="btn btn-primary btn-lg btn-block">生成议程表</button>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <button type="button" id="previewImage"
+                                    class="btn btn-success btn-lg btn-block">预览图片</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" id="downloadImage"
+                                    class="btn btn-success btn-lg btn-block">导出图片</button>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <button type="button" id="previewPdf"
+                                    class="btn btn-success btn-lg btn-block">预览PDF</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" id="downloadPdf"
+                                    class="btn btn-success btn-lg btn-block">导出PDF</button>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <button type="button" id="downloadExcel"
+                                    class="btn btn-info btn-lg btn-block">下载Excel表格</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </div>
-        
-        <script>
-              var HasSubmittedMessage = false;
-              var UpActionType = 1;
-              var DownActionType = 2;
 
-            $(document).ready(function() {
-              // Event listener for the submit button click
-              $('#submitButton').click(function() {
+        </div>
+    </div>
+
+    <script>
+        var HasSubmittedMessage = false;
+        var UpActionType = 1;
+        var DownActionType = 2;
+
+        function convertBackendScheduleDictListToFrontendDictList(scheduleEvents) {
+            // scheduleEvents is like:
+            // '[{ "event_name": "会议开场", "child_events": [ { "event_name": "主持人开场白(介绍会议主要内容、及可能的议程改动)", "duration": 1, "role": "主持人", "comment": "sdfs" }, { "event_name": "介绍会议规则以及宾客介绍（限时每位30秒）", "duration": 2, "role": "礼宾师", "comment": "sdfs" } ] }]';
+            let convertedList = [];
+            for (let i = 0; i < scheduleEvents.length; i++) {
+                let convertedEvent = convertBackendScheduleDictToFrontendDict(scheduleEvents[i], i + 1);
+                convertedList.push(convertedEvent);
+            }
+            return convertedList;
+        }
+
+        function convertBackendScheduleDictToFrontendDict(scheduleEvent, index) {
+            let data = {
+                Index: index,
+                Title: scheduleEvent.event_name,
+                ChildSessions: []
+            };
+
+            if ("duration" in scheduleEvent) {
+                data.Duration = scheduleEvent.duration;
+            }
+
+            if (scheduleEvent.child_events && Array.isArray(scheduleEvent.child_events)) {
+                for (let i = 0; i < scheduleEvent.child_events.length; i++) {
+                    let childEvent = scheduleEvent.child_events[i];
+                    let childSession = {
+                        ChildIndex: i + 1,
+                        Name: childEvent.event_name,
+                        Duration: childEvent.duration,
+                        Role: childEvent.role
+                    };
+                    data.ChildSessions.push(childSession);
+                }
+            }
+            return data;
+        }
+
+        $(document).ready(function () {
+            $.getJSON("static/user_input.json", function (json_data) {
+                data = convertBackendScheduleDictListToFrontendDictList(json_data.schedule_events);
+                console.log(data);
+                for (let i = 0; i < data.length; i++) {
+                    CreateSessionElement(data[i]);
+                }
+            })
+                .fail(function (jqxhr, textStatus, error) {
+                    console.error("Error fetching JSON file:", error);
+                });
+
+            // Event listener for the submit button click
+            $('#submitButton').click(function () {
                 MaskUtil.mask();
 
                 var meetingInfo = []; // Initialize meetingInfo as an empty list
-                $('.form-group .input-group input[type="text"], .form-group .input-group textarea').each(function() {
+                $('.form-group .input-group input[type="text"], .form-group .input-group textarea').each(function () {
                     var fieldName = $(this).attr('name');
                     var content = $(this).val();
                     // Create a dictionary with 'field_name' and 'content' keys and their respective values
@@ -224,7 +288,7 @@
                 //   contentType: 'application/json',
                 //   success: function(response) {
                 //     // Handle the response from the server
-                    
+
 
                 //     //Shutdown shade
                 //     MaskUtil.unmask();
@@ -258,288 +322,288 @@
                 //     },1500);
                 //   }
                 // });
-              
-            });
-            });
-            
-            function GetAgendaContent(){
-                let DivDom = $("#MeetingSession");
 
-                let AgendaContent = "";
-                for(let i = 0;i < DivDom.children().length;i++){
-                    let SessionData = GetSessionData(i,i+1);
-                    AgendaContent+= "# "+SessionData.Title+"\r\n";
+            });
+        });
 
-                    for(let j = 0;j < SessionData.ChildSessions.length;j++){
-                        let ChildSessioinData = SessionData.ChildSessions[j];
-                        let ChildSessionContent = ChildSessioinData.Name + " "+ChildSessioinData.Duration+" "+ChildSessioinData.Role+"\r\n";
-                        AgendaContent+=ChildSessionContent;
+        function GetAgendaContent() {
+            let DivDom = $("#MeetingSession");
+
+            let AgendaContent = "";
+            for (let i = 0; i < DivDom.children().length; i++) {
+                let SessionData = GetSessionData(i, i + 1);
+                AgendaContent += "# " + SessionData.Title + "\r\n";
+
+                for (let j = 0; j < SessionData.ChildSessions.length; j++) {
+                    let ChildSessioinData = SessionData.ChildSessions[j];
+                    let ChildSessionContent = ChildSessioinData.Name + " " + ChildSessioinData.Duration + " " + ChildSessioinData.Role + "\r\n";
+                    AgendaContent += ChildSessionContent;
+                }
+
+                AgendaContent += "\r\n";
+            }
+            return AgendaContent;
+        }
+
+        $(document).on('click', ".AddChildSession", function () {
+
+            let tbodyDom = $(this).parent().next().children().eq(1);
+            let newIndex = tbodyDom.children().length + 1;
+
+
+            let NewChildSessionData = { ChildIndex: newIndex, Name: "", Duration: 0, Role: "" };
+            let newTbTrDom = CreateChildSessionElement(NewChildSessionData);
+            tbodyDom.append(newTbTrDom);
+
+        })
+
+        // bind Session Up Method
+        $(document).on('click', '.SessionUp', function () {
+            // Check the index
+            let index = parseInt($(this).parent().children().eq(0).text());
+            if (index == 1) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是第一位，无法上移</div>');
+                $('#staticBackdrop').modal('show');
+
+                window.setTimeout(function () {
+                    // $("#staticBackdropClose").trigger("click");
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+            }
+            else {
+                SessionMove(index, 1)
+            }
+
+
+        })
+
+        $(document).on('click', '.SessionDown', function () {
+            let index = parseInt($(this).parent().children().eq(0).text());
+            let SessionsCount = $("#MeetingSession").children().length;
+            if (index == SessionsCount) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是最后一位，无法下移</div>');
+                $('#staticBackdrop').modal('show');
+
+                window.setTimeout(function () {
+                    // $("#staticBackdropClose").trigger("click");
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+            }
+            else {
+                SessionMove(index, -1)
+            }
+        })
+
+        $(document).on('click', '.SessionDel', function () {
+            let index = parseInt($(this).parent().children().eq(0).text());
+            let SessionsCount = $("#MeetingSession").children().length;
+            if (index < SessionsCount) {
+                console.log("Down the Session")
+                SessionMove(index, index - SessionsCount);
+            }
+
+            //删除最后一个子元素
+            $("#MeetingSession").children().last().remove();
+        })
+
+        function SessionMove(CurrIndex, span) {
+            let rowIndex = GetTableRowIndex(CurrIndex, UpActionType);
+            let BeginSession = GetSessionData(rowIndex, CurrIndex - span);
+            if (span > 0) {
+                for (let i = 0; i <= span; i++) {
+                    if (i < span) {
+                        let MovingSession = GetSessionData(GetTableRowIndex(CurrIndex - i - 1, UpActionType), CurrIndex - i);
+                        RenderSession(MovingSession);
+                    }
+                    else {
+                        RenderSession(BeginSession);
                     }
 
-                    AgendaContent+= "\r\n";
                 }
-                return AgendaContent;
             }
-
-            $(document).on('click', ".AddChildSession", function(){
-                
-                let tbodyDom = $(this).parent().next().children().eq(1);
-                let newIndex = tbodyDom.children().length+1;
-                
-                
-                let NewChildSessionData = {ChildIndex: newIndex, Name: "", Duration: 0, Role:""};
-                let newTbTrDom =  CreateChildSessionElement(NewChildSessionData); 
-                tbodyDom.append(newTbTrDom);
-                                            
-            })
-
-            // bind Session Up Method
-            $(document).on('click', '.SessionUp', function(){
-                // Check the index
-                let index = parseInt($(this).parent().children().eq(0).text());
-                if(index == 1){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是第一位，无法上移</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function(){
-                    // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-                else{
-                    SessionMove(index, 1)
-                }
-
-                
-            })
-
-            $(document).on('click', '.SessionDown', function(){
-                let index = parseInt($(this).parent().children().eq(0).text());
-                let SessionsCount = $("#MeetingSession").children().length;
-                if(index == SessionsCount){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是最后一位，无法下移</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function(){
-                    // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-                else{
-                    SessionMove(index, -1)
-                }
-            })
-
-            $(document).on('click', '.SessionDel', function(){
-                let index = parseInt($(this).parent().children().eq(0).text());
-                let SessionsCount = $("#MeetingSession").children().length;
-                if(index < SessionsCount){
-                    console.log("Down the Session")
-                    SessionMove(index, index-SessionsCount);
-                }
-
-                //删除最后一个子元素
-                $("#MeetingSession").children().last().remove();
-            })
-
-            function SessionMove(CurrIndex, span){
-                let rowIndex = GetTableRowIndex(CurrIndex, UpActionType);
-                let BeginSession = GetSessionData(rowIndex, CurrIndex-span);
-                if(span > 0){
-                    for(let i = 0;i<=span;i++){
-                        if(i < span){
-                            let MovingSession = GetSessionData(GetTableRowIndex(CurrIndex-i-1, UpActionType), CurrIndex-i);
-                            RenderSession(MovingSession);
-                        }
-                        else{
-                            RenderSession(BeginSession);
-                        }
-                        
-                    }    
-                }
-                else if(span < 0){
-                    for(let i = 0;i>=span;i--){
-                        if(i > span){
-                            let MovingSession = GetSessionData(GetTableRowIndex(CurrIndex-i-1, DownActionType), CurrIndex-i);
-                            RenderSession(MovingSession);
-                        }
-                        else{
-                            RenderSession(BeginSession);
-                        }
+            else if (span < 0) {
+                for (let i = 0; i >= span; i--) {
+                    if (i > span) {
+                        let MovingSession = GetSessionData(GetTableRowIndex(CurrIndex - i - 1, DownActionType), CurrIndex - i);
+                        RenderSession(MovingSession);
+                    }
+                    else {
+                        RenderSession(BeginSession);
                     }
                 }
-                
-                
-            }
-
-            function GetSessionData(CurrIndex, NewIndex){
-                
-                let SessionsDom = $("#MeetingSession").children().eq(CurrIndex);
-                let SessionName = SessionsDom.children().eq(0).children().eq(1).val();
-                
-                let childSessionsArr = [];
-                let tbodyDom = SessionsDom.children().eq(1).children().eq(1);
-                for(let i = 0;i<tbodyDom.children().length;i++){
-                    let trDom = tbodyDom.children().eq(i);
-                    let childSessionIndex = trDom.children().eq(0).text();
-                    let childSessionName = trDom.children().eq(1).children().val().trim();
-                    let childSessionDuration = trDom.children().eq(2).children().val().trim();
-                    let childSessionRole = trDom.children().eq(3).children().val().trim();
-                    
-                    let ChildSessionData = {ChildIndex: childSessionIndex, Name: childSessionName, Duration: childSessionDuration, Role:childSessionRole};
-                    childSessionsArr.push(ChildSessionData);
-                }
-
-                let data = {Index:NewIndex, Title:SessionName, ChildSessions: childSessionsArr};
-                return data;
-            }
-
-            function RenderSession(SessionData){                
-                let SessionsDom = $("#MeetingSession").children().eq(SessionData.Index-1);
-                SessionsDom.children().eq(0).children().eq(1).val(SessionData.Title);
-
-                let tbodyDom = SessionsDom.children().eq(1).children().eq(1);
-                tbodyDom.empty();
-
-                for(let i =0;i< SessionData.ChildSessions.length;i++){
-                    let tbodyTrDom = CreateChildSessionElement(SessionData.ChildSessions[i]);
-                    tbodyDom.append(tbodyTrDom);
-                }
-            }
-
-            function GetTableRowIndex(CurrIndex, Type){
-                //up action use -1; down action use 1
-                let RowIndex=  Type == 1 ? CurrIndex-1:CurrIndex+1;
-                return RowIndex;
             }
 
 
-            $(document).on('click', '.ChildSessionUp', function(){
-                let trDom = $(this).parent().parent().parent();
-                let index = trDom.children().eq(0).text();
-                if(index == 1){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是第一位，无法上移</div>');
-                    $('#staticBackdrop').modal('show');
+        }
 
-                    window.setTimeout(function(){
+        function GetSessionData(CurrIndex, NewIndex) {
+
+            let SessionsDom = $("#MeetingSession").children().eq(CurrIndex);
+            let SessionName = SessionsDom.children().eq(0).children().eq(1).val();
+
+            let childSessionsArr = [];
+            let tbodyDom = SessionsDom.children().eq(1).children().eq(1);
+            for (let i = 0; i < tbodyDom.children().length; i++) {
+                let trDom = tbodyDom.children().eq(i);
+                let childSessionIndex = trDom.children().eq(0).text();
+                let childSessionName = trDom.children().eq(1).children().val().trim();
+                let childSessionDuration = trDom.children().eq(2).children().val().trim();
+                let childSessionRole = trDom.children().eq(3).children().val().trim();
+
+                let ChildSessionData = { ChildIndex: childSessionIndex, Name: childSessionName, Duration: childSessionDuration, Role: childSessionRole };
+                childSessionsArr.push(ChildSessionData);
+            }
+
+            let data = { Index: NewIndex, Title: SessionName, ChildSessions: childSessionsArr };
+            return data;
+        }
+
+        function RenderSession(SessionData) {
+            let SessionsDom = $("#MeetingSession").children().eq(SessionData.Index - 1);
+            SessionsDom.children().eq(0).children().eq(1).val(SessionData.Title);
+
+            let tbodyDom = SessionsDom.children().eq(1).children().eq(1);
+            tbodyDom.empty();
+
+            for (let i = 0; i < SessionData.ChildSessions.length; i++) {
+                let tbodyTrDom = CreateChildSessionElement(SessionData.ChildSessions[i]);
+                tbodyDom.append(tbodyTrDom);
+            }
+        }
+
+        function GetTableRowIndex(CurrIndex, Type) {
+            //up action use -1; down action use 1
+            let RowIndex = Type == 1 ? CurrIndex - 1 : CurrIndex + 1;
+            return RowIndex;
+        }
+
+
+        $(document).on('click', '.ChildSessionUp', function () {
+            let trDom = $(this).parent().parent().parent();
+            let index = trDom.children().eq(0).text();
+            if (index == 1) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是第一位，无法上移</div>');
+                $('#staticBackdrop').modal('show');
+
+                window.setTimeout(function () {
                     // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-                else{
-                    let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
-                    let tbodyDom =  $("#MeetingSession").children().eq(SessionIndex-1).children().eq(1).children().eq(1);
-                    let CurrIndex = trDom.children().eq(0).text();
-                    ChildSessioinMove(CurrIndex, 1, tbodyDom);
-                }
-            })
-
-            $(document).on('click', ".ChildSessionDown", function(){
-                let trDom = $(this).parent().parent().parent();
-                let index = trDom.children().eq(0).text();
-                if(index == trDom.parent().children().length){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是最后一位，无法下移</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function(){
-                    // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-                else{
-                    let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
-                    let tbodyDom =  $("#MeetingSession").children().eq(SessionIndex-1).children().eq(1).children().eq(1);
-                    let CurrIndex = trDom.children().eq(0).text();
-                    ChildSessioinMove(CurrIndex, -1, tbodyDom);
-                }
-            })
-
-            $(document).on('click', ".ChildSessionDel", function(){
-                let trDom = $(this).parent().parent().parent();
-                let index = trDom.children().eq(0).text();
-
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+            }
+            else {
                 let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
-                let tbodyDom =  $("#MeetingSession").children().eq(SessionIndex-1).children().eq(1).children().eq(1);
-                if(index < trDom.parent().children().length){
-                    let CurrIndex = trDom.children().eq(0).text();
-                    ChildSessioinMove(CurrIndex, CurrIndex-tbodyDom.children().length, tbodyDom);
-                }
+                let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
+                let CurrIndex = trDom.children().eq(0).text();
+                ChildSessioinMove(CurrIndex, 1, tbodyDom);
+            }
+        })
 
-                tbodyDom.children().last().remove();
-            })
+        $(document).on('click', ".ChildSessionDown", function () {
+            let trDom = $(this).parent().parent().parent();
+            let index = trDom.children().eq(0).text();
+            if (index == trDom.parent().children().length) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是最后一位，无法下移</div>');
+                $('#staticBackdrop').modal('show');
 
-            function ChildSessioinMove(CurrIndex, span, tbodyDom){
-                let rowIndex = GetTableRowIndex(CurrIndex, UpActionType);
-                let BeginSession = GetChildSession(rowIndex, tbodyDom);
-                if(span > 0){
-                    for(let i = 0;i<=span;i++){
-                        if(i < span){
-                            let MovingSession = GetChildSession(GetTableRowIndex(CurrIndex-i-1, UpActionType), tbodyDom);
-                            RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex-i, UpActionType) ,MovingSession);
-                        }
-                        else{
-                            RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex-i, UpActionType) ,BeginSession);
-                        }
-                        
-                    }    
+                window.setTimeout(function () {
+                    // $("#staticBackdropClose").trigger("click");
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+            }
+            else {
+                let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
+                let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
+                let CurrIndex = trDom.children().eq(0).text();
+                ChildSessioinMove(CurrIndex, -1, tbodyDom);
+            }
+        })
+
+        $(document).on('click', ".ChildSessionDel", function () {
+            let trDom = $(this).parent().parent().parent();
+            let index = trDom.children().eq(0).text();
+
+            let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
+            let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
+            if (index < trDom.parent().children().length) {
+                let CurrIndex = trDom.children().eq(0).text();
+                ChildSessioinMove(CurrIndex, CurrIndex - tbodyDom.children().length, tbodyDom);
+            }
+
+            tbodyDom.children().last().remove();
+        })
+
+        function ChildSessioinMove(CurrIndex, span, tbodyDom) {
+            let rowIndex = GetTableRowIndex(CurrIndex, UpActionType);
+            let BeginSession = GetChildSession(rowIndex, tbodyDom);
+            if (span > 0) {
+                for (let i = 0; i <= span; i++) {
+                    if (i < span) {
+                        let MovingSession = GetChildSession(GetTableRowIndex(CurrIndex - i - 1, UpActionType), tbodyDom);
+                        RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex - i, UpActionType), MovingSession);
+                    }
+                    else {
+                        RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex - i, UpActionType), BeginSession);
+                    }
+
                 }
-                else if(span < 0){
-                    for(let i = 0;i>=span;i--){
-                        if(i > span){
-                            let MovingSession = GetChildSession(GetTableRowIndex(CurrIndex-i-1, DownActionType), tbodyDom);
-                            RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex-i, UpActionType) ,MovingSession);
-                        }
-                        else{
-                            RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex-i, UpActionType) ,BeginSession);
-                        }
+            }
+            else if (span < 0) {
+                for (let i = 0; i >= span; i--) {
+                    if (i > span) {
+                        let MovingSession = GetChildSession(GetTableRowIndex(CurrIndex - i - 1, DownActionType), tbodyDom);
+                        RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex - i, UpActionType), MovingSession);
+                    }
+                    else {
+                        RenderChildSession(tbodyDom, GetTableRowIndex(CurrIndex - i, UpActionType), BeginSession);
                     }
                 }
             }
+        }
 
-            function GetChildSession(rowIndex, tbodyDom){
-                let targetTrDom = tbodyDom.children().eq(rowIndex);
-                
-                let ChildSessionName = targetTrDom.children().eq(1).children().val();
-                let ChildSessionDuration = targetTrDom.children().eq(2).children().val();
-                let ChildSessionRole = targetTrDom.children().eq(3).children().val();
-                
-                let ChildSessionData = {Name: ChildSessionName, Duration: ChildSessionDuration, Role:ChildSessionRole};
-                return ChildSessionData;
-            }
+        function GetChildSession(rowIndex, tbodyDom) {
+            let targetTrDom = tbodyDom.children().eq(rowIndex);
 
-            function RenderChildSession(tbodyDom, rowIndex, NewChildSessionDta){
-                let targetTrDom = tbodyDom.children().eq(rowIndex);
-                
-                targetTrDom.children().eq(1).children().val(NewChildSessionDta.Name);
-                targetTrDom.children().eq(2).children().val(NewChildSessionDta.Duration);
-                targetTrDom.children().eq(3).children().val(NewChildSessionDta.Role);
-            }
+            let ChildSessionName = targetTrDom.children().eq(1).children().val();
+            let ChildSessionDuration = targetTrDom.children().eq(2).children().val();
+            let ChildSessionRole = targetTrDom.children().eq(3).children().val();
 
-            
-            // Add JavaScript code to send a request to the Flask route when the button is clicked
-            document.getElementById("downloadExcel").addEventListener("click", function() {
-                if(HasSubmittedMessage == false){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先要生成议程表</div>');
-                    $('#staticBackdrop').modal('show');
+            let ChildSessionData = { Name: ChildSessionName, Duration: ChildSessionDuration, Role: ChildSessionRole };
+            return ChildSessionData;
+        }
 
-                    window.setTimeout(function(){
+        function RenderChildSession(tbodyDom, rowIndex, NewChildSessionDta) {
+            let targetTrDom = tbodyDom.children().eq(rowIndex);
+
+            targetTrDom.children().eq(1).children().val(NewChildSessionDta.Name);
+            targetTrDom.children().eq(2).children().val(NewChildSessionDta.Duration);
+            targetTrDom.children().eq(3).children().val(NewChildSessionDta.Role);
+        }
+
+
+        // Add JavaScript code to send a request to the Flask route when the button is clicked
+        document.getElementById("downloadExcel").addEventListener("click", function () {
+            if (HasSubmittedMessage == false) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先要生成议程表</div>');
+                $('#staticBackdrop').modal('show');
+
+                window.setTimeout(function () {
                     // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                    return;
-                }
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+                return;
+            }
 
-                MaskUtil.mask();
+            MaskUtil.mask();
 
-                // Send a GET request to the '/export_image' route
-                fetch('./download_excel', {
-                    method: 'GET'
-                })
+            // Send a GET request to the '/export_image' route
+            fetch('./download_excel', {
+                method: 'GET'
+            })
                 .then(response => {
                     if (response.ok) {
                         // If the response is successful, trigger the download
@@ -557,53 +621,53 @@
                             $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载Excel版议程表成功</div>');
                             $('#staticBackdrop').modal('show');
 
-                            window.setTimeout(function(){
+                            window.setTimeout(function () {
                                 // $("#staticBackdropClose").trigger("click");
                                 $("#staticBackdrop").modal('hide');
-                            },1500);
+                            }, 1500);
                         });
-                    } 
+                    }
                     else {
                         console.error("Failed to download EXCEL");
-                    
+
                         MaskUtil.unmask();
                         $('#Submitted_Content').empty();
                         $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
                         $('#staticBackdrop').modal('show');
 
-                       window.setTimeout(function(){
+                        window.setTimeout(function () {
                             // $("#staticBackdropClose").trigger("click");
                             $("#staticBackdrop").modal('hide');
-                        },1500);
+                        }, 1500);
                     }
                 })
                 .catch(error => {
                     console.error("Error:", error);
 
                     MaskUtil.unmask();
-                        $('#Submitted_Content').empty();
-                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
-                        $('#staticBackdrop').modal('show');
-
-                        window.setTimeout(function(){
-                            // $("#staticBackdropClose").trigger("click");
-                            $("#staticBackdrop").modal('hide');
-                        },1500);
-                });
-            });
-
-        document.getElementById("downloadPdf").addEventListener("click", function() {
-            if(HasSubmittedMessage == false){
                     $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
                     $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
-                    // $("#staticBackdropClose").trigger("click");
+                    window.setTimeout(function () {
+                        // $("#staticBackdropClose").trigger("click");
                         $("#staticBackdrop").modal('hide');
-                    },1500);
-                    return;
-                }
+                    }, 1500);
+                });
+        });
+
+        document.getElementById("downloadPdf").addEventListener("click", function () {
+            if (HasSubmittedMessage == false) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                $('#staticBackdrop').modal('show');
+
+                window.setTimeout(function () {
+                    // $("#staticBackdropClose").trigger("click");
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+                return;
+            }
 
             MaskUtil.mask();
 
@@ -611,133 +675,133 @@
             fetch('./download_pdf', {
                 method: 'GET'
             })
-            .then(response => {
-                if (response.ok) {
-                    // If the response is successful, trigger the download
-                    response.blob().then(blob => {
-                        var url = window.URL.createObjectURL(blob);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'touma_club_agenda.pdf'; // You can set the desired filename here
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
+                .then(response => {
+                    if (response.ok) {
+                        // If the response is successful, trigger the download
+                        response.blob().then(blob => {
+                            var url = window.URL.createObjectURL(blob);
+                            var a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'touma_club_agenda.pdf'; // You can set the desired filename here
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+
+                            MaskUtil.unmask();
+                            $('#Submitted_Content').empty();
+                            $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载PDF版议程表成功</div>');
+                            $('#staticBackdrop').modal('show');
+
+                            window.setTimeout(function () {
+                                // $("#staticBackdropClose").trigger("click");
+                                $("#staticBackdrop").modal('hide');
+                            }, 1500);
+                        });
+                    } else {
+                        console.error("Failed to download PDF");
 
                         MaskUtil.unmask();
                         $('#Submitted_Content').empty();
-                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载PDF版议程表成功</div>');
+                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载PDF版议程表失败</div>');
                         $('#staticBackdrop').modal('show');
 
-                        window.setTimeout(function(){
+                        window.setTimeout(function () {
                             // $("#staticBackdropClose").trigger("click");
                             $("#staticBackdrop").modal('hide');
-                        },1500);
-                    });
-                } else {
-                    console.error("Failed to download PDF");
-
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
                     MaskUtil.unmask();
                     $('#Submitted_Content').empty();
                     $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载PDF版议程表失败</div>');
                     $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
+                    window.setTimeout(function () {
                         // $("#staticBackdropClose").trigger("click");
                         $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载PDF版议程表失败</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function(){
-                        // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-            });
+                    }, 1500);
+                });
         });
 
-        document.getElementById("previewPdf").addEventListener("click", function() {
-            if(HasSubmittedMessage == false){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
-                    $('#staticBackdrop').modal('show');
+        document.getElementById("previewPdf").addEventListener("click", function () {
+            if (HasSubmittedMessage == false) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
+                window.setTimeout(function () {
                     // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                    return;
-                }
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+                return;
+            }
 
             MaskUtil.mask();
 
             fetch('./download_pdf', {
                 method: 'GET'
             })
-            .then(response => {
-                if (response.ok) {
-                    // If the response is successful, display the PDF in a new browser tab
-                    response.blob().then(blob => {
-                        var url = window.URL.createObjectURL(blob);
+                .then(response => {
+                    if (response.ok) {
+                        // If the response is successful, display the PDF in a new browser tab
+                        response.blob().then(blob => {
+                            var url = window.URL.createObjectURL(blob);
 
-                        // Open the PDF in a new browser tab
-                        window.open(url, '_blank');
+                            // Open the PDF in a new browser tab
+                            window.open(url, '_blank');
+
+                            MaskUtil.unmask();
+                            $('#Submitted_Content').empty();
+                            $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览PDF版议程表成功</div>');
+                            $('#staticBackdrop').modal('show');
+
+                            window.setTimeout(function () {
+                                // $("#staticBackdropClose").trigger("click");
+                                $("#staticBackdrop").modal('hide');
+                            }, 1500);
+                        });
+                    } else {
+                        console.error("Failed to retrieve PDF");
 
                         MaskUtil.unmask();
                         $('#Submitted_Content').empty();
-                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览PDF版议程表成功</div>');
+                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览PDF版议程表失败</div>');
                         $('#staticBackdrop').modal('show');
 
-                        window.setTimeout(function(){
+                        window.setTimeout(function () {
                             // $("#staticBackdropClose").trigger("click");
                             $("#staticBackdrop").modal('hide');
-                        },1500);
-                    });
-                } else {
-                    console.error("Failed to retrieve PDF");
-
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
                     MaskUtil.unmask();
                     $('#Submitted_Content').empty();
                     $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览PDF版议程表失败</div>');
                     $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
+                    window.setTimeout(function () {
                         // $("#staticBackdropClose").trigger("click");
                         $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览PDF版议程表失败</div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function(){
-                    // $("#staticBackdropClose").trigger("click");
-                    $("#staticBackdrop").modal('hide');
-                },1500);
-            });
+                    }, 1500);
+                });
         });
 
-        document.getElementById("downloadImage").addEventListener("click", function() {
-            if(HasSubmittedMessage == false){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
-                    $('#staticBackdrop').modal('show');
+        document.getElementById("downloadImage").addEventListener("click", function () {
+            if (HasSubmittedMessage == false) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
+                window.setTimeout(function () {
                     // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                    return;
-                }
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+                return;
+            }
 
             MaskUtil.mask();
 
@@ -745,132 +809,133 @@
             fetch('./export_image', {
                 method: 'GET'
             })
-            .then(response => {
-                if (response.ok) {
-                    // If the response is successful, trigger the download
-                    response.blob().then(blob => {
-                        var url = window.URL.createObjectURL(blob);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'touma_club_agenda.jpg'; // You can set the desired filename here
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
+                .then(response => {
+                    if (response.ok) {
+                        // If the response is successful, trigger the download
+                        response.blob().then(blob => {
+                            var url = window.URL.createObjectURL(blob);
+                            var a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'touma_club_agenda.jpg'; // You can set the desired filename here
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+
+                            MaskUtil.unmask();
+                            $('#Submitted_Content').empty();
+                            $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载图片议程表成功</div>');
+                            $('#staticBackdrop').modal('show');
+
+                            window.setTimeout(function () {
+                                $("#staticBackdrop").modal('hide');
+                            }, 1500);
+                        });
+                    } else {
+                        console.error("Failed to download image");
 
                         MaskUtil.unmask();
                         $('#Submitted_Content').empty();
-                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载图片议程表成功</div>');
+                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载图片议程表失败</div>');
                         $('#staticBackdrop').modal('show');
 
-                        window.setTimeout(function(){
+                        window.setTimeout(function () {
                             $("#staticBackdrop").modal('hide');
-                        },1500);
-                    });
-                } else {
-                    console.error("Failed to download image");
-
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
                     MaskUtil.unmask();
                     $('#Submitted_Content').empty();
                     $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载图片议程表失败</div>');
                     $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
+                    window.setTimeout(function () {
                         $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载图片议程表失败</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function(){
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-            });
+                    }, 1500);
+                });
         });
 
-        document.getElementById("previewImage").addEventListener("click", function() {
-            if(HasSubmittedMessage == false){
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
-                    $('#staticBackdrop').modal('show');
+        document.getElementById("previewImage").addEventListener("click", function () {
+            if (HasSubmittedMessage == false) {
+                $('#Submitted_Content').empty();
+                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
+                $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
+                window.setTimeout(function () {
                     // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    },1500);
-                    return;
-                }
+                    $("#staticBackdrop").modal('hide');
+                }, 1500);
+                return;
+            }
 
             MaskUtil.mask();
 
             fetch('./export_image', {
                 method: 'GET'
             })
-            .then(response => {
-                if (response.ok) {
-                    // If the response is successful, display the PDF in a new browser tab
-                    response.blob().then(blob => {
-                        var url = window.URL.createObjectURL(blob);
+                .then(response => {
+                    if (response.ok) {
+                        // If the response is successful, display the PDF in a new browser tab
+                        response.blob().then(blob => {
+                            var url = window.URL.createObjectURL(blob);
 
-                        // Open the PDF in a new browser tab
-                        window.open(url, '_blank');
+                            // Open the PDF in a new browser tab
+                            window.open(url, '_blank');
+
+                            MaskUtil.unmask();
+                            $('#Submitted_Content').empty();
+                            $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览图片议程表成功</div>');
+                            $('#staticBackdrop').modal('show');
+
+                            window.setTimeout(function () {
+                                // $("#staticBackdropClose").trigger("click");
+                                $("#staticBackdrop").modal('hide');
+                            }, 1500);
+                        });
+                    } else {
+                        console.error("Failed to preview image");
 
                         MaskUtil.unmask();
                         $('#Submitted_Content').empty();
-                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览图片议程表成功</div>');
+                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览图片议程表失败</div>');
                         $('#staticBackdrop').modal('show');
 
-                        window.setTimeout(function(){
+                        window.setTimeout(function () {
                             // $("#staticBackdropClose").trigger("click");
                             $("#staticBackdrop").modal('hide');
-                        },1500);
-                    });
-                } else {
-                    console.error("Failed to preview image");
-
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
                     MaskUtil.unmask();
                     $('#Submitted_Content').empty();
                     $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览图片议程表失败</div>');
                     $('#staticBackdrop').modal('show');
 
-                    window.setTimeout(function(){
+                    window.setTimeout(function () {
                         // $("#staticBackdropClose").trigger("click");
                         $("#staticBackdrop").modal('hide');
-                    },1500);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览图片议程表失败</div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function(){
-                    // $("#staticBackdropClose").trigger("click");
-                    $("#staticBackdrop").modal('hide');
-                },1500);
-            });
+                    }, 1500);
+                });
         });
 
         // // Add Meeting Session
-        document.getElementById("MeetingSession_Add").addEventListener("click", function(){
+        document.getElementById("MeetingSession_Add").addEventListener("click", function () {
             CreateSessionElement();
         })
 
-        function CreateSessionElement(data){
+        function CreateSessionElement(data) {
+            console.log(data)
             let NewSessionID = "Session_";  //Get Session ID
-            if(jQuery.isEmptyObject(data)){
+            if (jQuery.isEmptyObject(data)) {
                 //Get New Session Index
                 let MeetingSessions_Count = $("#MeetingSession").children().length; //Get Current Sessions Length
-                let NewSessionIndex = MeetingSessions_Count+1;
-                NewSessionID+=NewSessionIndex;
+                let NewSessionIndex = MeetingSessions_Count + 1;
+                NewSessionID += NewSessionIndex;
 
-                data = {Index: NewSessionIndex, Title: "", ChildSessions: []};
+                data = { Index: NewSessionIndex, Title: "", ChildSessions: [] };
             }
             else
                 NewSessionID += data.Index;
@@ -883,10 +948,18 @@
             let Input_SessionName = $("<input />");
             Input_SessionName.attr("type", "text");
             Input_SessionName.addClass("form-control");
-            if(data.Title === "")
+            if (data.Title === "")
                 Input_SessionName.attr("placeholder", "请输入环节名称");
             else
                 Input_SessionName.attr("value", data.Title);
+
+            let Input_SessionDuration = $("<input />");
+            Input_SessionDuration.attr("type", "text");
+            Input_SessionDuration.addClass("form-control");
+            if (!("Duration" in data))
+                Input_SessionDuration.attr("placeholder", "请输入环节时长");
+            else
+                Input_SessionDuration.attr("value", data.Duration);
 
             //Add Operational Button
             let Button_ChildSession_Add = GetButtonDom("info", "添加子环节", "AddChildSession");
@@ -898,6 +971,7 @@
             DivRow_InputGroup.addClass("input-group mb-3");
             Span_SessionNum.appendTo(DivRow_InputGroup);
             Input_SessionName.appendTo(DivRow_InputGroup);
+            Input_SessionDuration.appendTo(DivRow_InputGroup);
             Button_ChildSession_Add.appendTo(DivRow_InputGroup);
             Button_Session_Up.appendTo(DivRow_InputGroup);
             Button_Session_Down.appendTo(DivRow_InputGroup);
@@ -927,8 +1001,8 @@
 
             //Add tbody
             let tbodyDom = $("<tbody></tbody");
-            if(data.ChildSessions.length > 0){
-                for(let i = 0;i < data.ChildSessions.length;i++){
+            if (data.ChildSessions && data.ChildSessions.length > 0) {
+                for (let i = 0; i < data.ChildSessions.length; i++) {
                     let tbtrDom = CreateChildSessionElement(data.ChildSessions[i]);
                     tbtrDom.appendTo(tbodyDom);
                 }
@@ -949,26 +1023,26 @@
 
 
         //Create Children Session
-        function CreateChildSessionElement(data){
-            if(jQuery.isEmptyObject(data)){
-                data = {ChildIndex: 0, Name: "", Duration: 0, Role:""};
+        function CreateChildSessionElement(data) {
+            if (jQuery.isEmptyObject(data)) {
+                data = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
             }
 
             //Num
-            let ChildNumCol = $("<th scope=\"row\" style=\"text-align: center;\">"+data.ChildIndex+"</th>")
-                    
+            let ChildNumCol = $("<th scope=\"row\" style=\"text-align: center;\">" + data.ChildIndex + "</th>")
+
             //Children Session Name
             let ChildSession_Name = $("<input type=\"text\"  class=\"form-control\" />")
-            if(data.Name == "")
-                        ChildSession_Name.attr("placeholder", "请输入子环节名称");
+            if (data.Name == "")
+                ChildSession_Name.attr("placeholder", "请输入子环节名称");
             else
                 ChildSession_Name.attr("value", data.Name);
             let TD_Name = $("<td></td>");
-                ChildSession_Name.appendTo(TD_Name);
+            ChildSession_Name.appendTo(TD_Name);
 
             //Children Session Duration
             let ChildSession_Duration = $("<input type=\"text\"  class=\"form-control\" />")
-            if(data.Duration == "")
+            if (data.Duration == "")
                 ChildSession_Duration.attr("placeholder", "请输入子环节时长");
             else
                 ChildSession_Duration.attr("value", data.Duration);
@@ -984,7 +1058,7 @@
             let btn_Child_Up = GetButtonDom("primary", "▲", "ChildSessionUp");
             let btn_Child_Down = GetButtonDom("warning", "▼", "ChildSessionDown");
             let btn_Child_Del = GetButtonDom("danger", "×", "ChildSessionDel");
-                    
+
             let Center_Btn = $("<center></center>");
             Center_Btn.append(btn_Child_Up);
             Center_Btn.append(btn_Child_Down);
@@ -1003,32 +1077,32 @@
             return tbtrDom;
         }
 
-        function GetDivDom(){
+        function GetDivDom() {
             let div = $("<div></div>");
             return div;
         }
 
-        function GetButtonDom(color, name, classNameForClick){
+        function GetButtonDom(color, name, classNameForClick) {
             let button = $("<button></button>");
             button.attr("type", "button");
             // button.attr("id", ID);
 
-            let className = "btn btn-"+color+" "+classNameForClick;
+            let className = "btn btn-" + color + " " + classNameForClick;
             button.addClass(className);
             button.text(name);
 
             return button;
         }
 
-        function GetThDom(colName){
-            let thDom = $("<th>"+colName+"</th>");
+        function GetThDom(colName) {
+            let thDom = $("<th>" + colName + "</th>");
             thDom.attr("scope", "col");
             thDom.attr("style", 'style="text-align: center;"');
             return thDom;
         }
 
         //Get Role Select
-        function GetRoleSelect(SelectedRole){
+        function GetRoleSelect(SelectedRole) {
             let RoleData = $("#role_name_list").text();
             // console.log(RoleData);
 
@@ -1038,13 +1112,13 @@
 
             //Split Role Message
             let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
-            for(let r = 0;r < RoleArr.length;r++){
-                if(RoleArr[r] != ""){
+            for (let r = 0; r < RoleArr.length; r++) {
+                if (RoleArr[r] != "") {
                     let role = $.trim(RoleArr[r].split(':')[0]);
-                    let OptionStr_Role = "<option value=\""+role+"\"";
-                    if(role == SelectedRole)
+                    let OptionStr_Role = "<option value=\"" + role + "\"";
+                    if (role == SelectedRole)
                         OptionStr_Role += " selected"
-                    OptionStr_Role += ">"+role+"</option>";
+                    OptionStr_Role += ">" + role + "</option>";
 
                     let OptionDom_Role = $(OptionStr_Role);
                     OptionDom_Role.appendTo(SelectDom);
@@ -1054,38 +1128,38 @@
             return SelectDom;
         }
 
-        
+
         /**
  * 说明：数据进行加载时的遮罩层，基于bootstrap的页面模态框做封装处理
  * 使用方法:
  * 开启:MaskUtil.mask();
  * 关闭:MaskUtil.unmask();
  */
-var MaskUtil = (function(){
-    var $mask,$maskMsg;
-    var defMsg = '正在生成，请稍等 . . .';
-    function init(){
-        if(!$mask){
-            $mask = $("<div id=\"myWaitingModal\" class=\"modal fade\" data-keyboard=\"false\" data-backdrop=\"static\" data-role=\"dialog\" " +
-                "aria-labelledby=\"myWaitingModalLabel\" aria-hidden=\"true\">" +
-                "<div id=\"loading\" class=\"loading\"><span class=\"spinner-border\" role=\"status\"></span>"+
-                    "<span>&nbsp;&nbsp;"+defMsg+"</span></div></div>").appendTo("body");
-        }
-    }
-    return {
-        mask:function(){
-            init();
-            $('#myWaitingModal').modal('show');
-        }
-        ,unmask:function(){
-            $('#myWaitingModal').modal('hide');
-            $mask = null;
-            $('#myWaitingModal').remove();
-            $('.modal-backdrop').hide();
-        }
-    }
-}());
-            </script>
-    </body>
+        var MaskUtil = (function () {
+            var $mask, $maskMsg;
+            var defMsg = '正在生成，请稍等 . . .';
+            function init() {
+                if (!$mask) {
+                    $mask = $("<div id=\"myWaitingModal\" class=\"modal fade\" data-keyboard=\"false\" data-backdrop=\"static\" data-role=\"dialog\" " +
+                        "aria-labelledby=\"myWaitingModalLabel\" aria-hidden=\"true\">" +
+                        "<div id=\"loading\" class=\"loading\"><span class=\"spinner-border\" role=\"status\"></span>" +
+                        "<span>&nbsp;&nbsp;" + defMsg + "</span></div></div>").appendTo("body");
+                }
+            }
+            return {
+                mask: function () {
+                    init();
+                    $('#myWaitingModal').modal('show');
+                }
+                , unmask: function () {
+                    $('#myWaitingModal').modal('hide');
+                    $mask = null;
+                    $('#myWaitingModal').remove();
+                    $('.modal-backdrop').hide();
+                }
+            }
+        }());
+    </script>
+</body>
 
 </html>
