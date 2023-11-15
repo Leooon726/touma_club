@@ -56,7 +56,7 @@
         <div class="row">
             <div class="col-12">
                 <form>
-                    <div class="form-group">
+                    <div class="form-group" , id="meetingInfo">
                         <!-- <label for="meeting_info">会议信息</label> -->
                         {% for item in data['meeting_info'] %}
                         <div class="input-group">
@@ -245,7 +245,7 @@
         $(document).ready(function () {
             $.getJSON("static/user_input.json", function (json_data) {
                 data = convertBackendScheduleDictListToFrontendDictList(json_data.schedule_events);
-                console.log(data);
+                // console.log(data);
                 for (let i = 0; i < data.length; i++) {
                     CreateSessionElement(data[i]);
                 }
@@ -259,7 +259,7 @@
                 MaskUtil.mask();
 
                 var meetingInfo = []; // Initialize meetingInfo as an empty list
-                $('.form-group .input-group input[type="text"], .form-group .input-group textarea').each(function () {
+                $('#meetingInfo .input-group input[type="text"], #meetingInfo .input-group textarea').each(function () {
                     var fieldName = $(this).attr('name');
                     var content = $(this).val();
                     // Create a dictionary with 'field_name' and 'content' keys and their respective values
@@ -273,55 +273,56 @@
                 // console.log(meetingInfo);
 
                 // Create an object to store the form data
+                // TODO(Changhong): send json as agenda_content.
                 var formData = {
                     meeting_info: meetingInfo,
                     role_name_list: $('#role_name_list').val(),
-                    agenda_content: $('#agenda_content').val()
+                    agenda_content: GetAgendaContent() // $('#agenda_content').val()
                 };
 
-                console.log(GetAgendaContent());
                 // Send the form data as JSON via a POST request
-                // $.ajax({
-                //   type: 'POST',
-                //   url: './generate_with_text_blocks',
-                //   data: JSON.stringify(formData),
-                //   contentType: 'application/json',
-                //   success: function(response) {
-                //     // Handle the response from the server
+                $.ajax({
+                    type: 'POST',
+                    url: './generate_with_text_blocks',
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        // Handle the response from the server
+                        console.log('Data sent successfully');
+                        console.log(response);
 
+                        //Shutdown shade
+                        MaskUtil.unmask();
 
-                //     //Shutdown shade
-                //     MaskUtil.unmask();
+                        // Pop a message to notify the user.
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-success" role="alert"> 议程表生成成功 </div>');
+                        $('#staticBackdrop').modal('show');
 
-                //     // Pop a message to notify the user.
-                //     $('#Submitted_Content').empty();
-                //     $('#Submitted_Content').append('<div class="alert alert-success" role="alert"> 议程表生成成功 </div>');
-                //     $('#staticBackdrop').modal('show');
+                        // Close modal automatically
+                        window.setTimeout(function () {
+                            $("#staticBackdropClose").trigger("click");
+                            $("#staticBackdrop").modal('hide');
+                        }, 1500);
 
-                //     // Close modal automatically
-                //     window.setTimeout(function(){
-                //         // $("#staticBackdropClose").trigger("click");
-                //         $("#staticBackdrop").modal('hide');
-                //     },1500);
+                        HasSubmittedMessage = true;
+                    },
+                    error: function (error) {
+                        // Handle any errors that occur during the request
+                        console.error('Error:', error);
+                        // Display an error message to the user
+                        // $('#message').html('<p>Error occurred: ' + error.statusText + '</p>');
 
-                //     HasSubmittedMessage = true;
-                //   },
-                //   error: function(error) {
-                //     // Handle any errors that occur during the request
-                //     console.error('Error:', error);
-                //     // Display an error message to the user
-                //     // $('#message').html('<p>Error occurred: ' + error.statusText + '</p>');
+                        MaskUtil.unmask();
+                        $('#Submitted_Content').empty();
+                        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert"> ' + error.statusText + ' </div>');
+                        $('#staticBackdrop').modal('show');
 
-                //     MaskUtil.unmask();
-                //     $('#Submitted_Content').empty();
-                //     $('#Submitted_Content').append('<div class="alert alert-danger" role="alert"> '+ error.statusText +' </div>');
-                //     $('#staticBackdrop').modal('show');
-
-                //     window.setTimeout(function(){
-                //         $("#staticBackdrop").modal('hide');
-                //     },1500);
-                //   }
-                // });
+                        window.setTimeout(function () {
+                            $("#staticBackdrop").modal('hide');
+                        }, 1500);
+                    }
+                });
 
             });
         });
@@ -927,7 +928,6 @@
         })
 
         function CreateSessionElement(data) {
-            console.log(data)
             let NewSessionID = "Session_";  //Get Session ID
             if (jQuery.isEmptyObject(data)) {
                 //Get New Session Index
