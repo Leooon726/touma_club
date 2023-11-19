@@ -54,7 +54,6 @@ function CreateSessionElement(data) {
 
     //Add Container
     let DivContainer = GetDivDom();
-    // DivContainer.attr("id", NewSessionID);
     DivContainer.addClass("parent-and-children-session"); //container-fluid
     // DivRow_Title.appendTo(DivContainer);
     DivRow_InputGroup.appendTo(DivContainer);
@@ -175,61 +174,6 @@ function CreateChildSessionElement(data) {
 
     return tbtrDom;
 }
-
-//Create Children Session
-// function CreateChildSessionElement2(data) {
-//     if (jQuery.isEmptyObject(data)) {
-//         data = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
-//     }
-
-//     //Num
-//     let ChildNumCol = $("<th scope=\"row\" style=\"text-align: center;\">" + data.ChildIndex + "</th>")
-
-//     //Children Session Name
-//     let ChildSession_Name = $("<input type=\"text\"  class=\"form-control\" />")
-//     if (data.Name == "")
-//         ChildSession_Name.attr("placeholder", "请输入子环节名称");
-//     else
-//         ChildSession_Name.attr("value", data.Name);
-//     let TD_Name = $("<td></td>");
-//     ChildSession_Name.appendTo(TD_Name);
-
-//     //Children Session Duration
-//     let ChildSession_Duration = $("<input type=\"text\"  class=\"form-control\" />")
-//     if (data.Duration == "")
-//         ChildSession_Duration.attr("placeholder", "请输入子环节时长");
-//     else
-//         ChildSession_Duration.attr("value", data.Duration);
-//     let TD_Duration = $("<td></td>");
-//     ChildSession_Duration.appendTo(TD_Duration);
-
-//     //Children Session Role
-//     let ChildSession_Role = GetRoleSelect(data.Role);
-//     let TD_Role = $("<td></td>");
-//     ChildSession_Role.appendTo(TD_Role);
-
-//     //Children Session Operation
-//     let btn_Child_Up = GetButtonDom("primary", "▲", "ChildSessionUp");
-//     let btn_Child_Down = GetButtonDom("warning", "▼", "ChildSessionDown");
-//     let btn_Child_Del = GetButtonDom("danger", "×", "ChildSessionDel");
-
-//     let Center_Btn = $("<center></center>");
-//     Center_Btn.append(btn_Child_Up);
-//     Center_Btn.append(btn_Child_Down);
-//     Center_Btn.append(btn_Child_Del);
-
-//     let TD_Btn = $("<td></td>");
-//     TD_Btn.append(Center_Btn);
-
-//     let tbtrDom = $("<tr></tr>");
-//     ChildNumCol.appendTo(tbtrDom);
-//     TD_Name.appendTo(tbtrDom);
-//     TD_Duration.appendTo(tbtrDom);
-//     TD_Role.appendTo(tbtrDom);
-//     TD_Btn.appendTo(tbtrDom);
-
-//     return tbtrDom;
-// }
 
 function GetDivDom() {
     let div = $("<div></div>");
@@ -370,9 +314,11 @@ $(document).on('click', ".AddChildSession", function () {
 
 // bind Session Up Method
 $(document).on('click', '.SessionUp', function () {
+    let CurrSession = $(this).parent().parent()
+    let MeetingSessions = $("#MeetingSession");
+    let CurrSessionIndex = MeetingSessions.children().index(CurrSession);
     // Check the index
-    let index = parseInt($(this).parent().children().eq(0).text());
-    if (index == 1) {
+    if (CurrSessionIndex == 0) {
         $('#Submitted_Content').empty();
         $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是第一位，无法上移</div>');
         $('#staticBackdrop').modal('show');
@@ -383,16 +329,21 @@ $(document).on('click', '.SessionUp', function () {
         }, 1500);
     }
     else {
-        SessionMove(index, 1)
+        let previousSession = MeetingSessions.children().eq(CurrSessionIndex - 1);
+        CurrSession.insertBefore(previousSession);
+
+        // SessionMove(index, 1)
     }
 
 
 })
 
 $(document).on('click', '.SessionDown', function () {
-    let index = parseInt($(this).parent().children().eq(0).text());
-    let SessionsCount = $("#MeetingSession").children().length;
-    if (index == SessionsCount) {
+    let CurrSession = $(this).parent().parent()
+    let MeetingSessions = $("#MeetingSession");
+    let CurrSessionIndex = MeetingSessions.children().index(CurrSession);
+    let SessionsCount = MeetingSessions.children().length;
+    if (CurrSessionIndex == SessionsCount-1) {
         $('#Submitted_Content').empty();
         $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是最后一位，无法下移</div>');
         $('#staticBackdrop').modal('show');
@@ -403,7 +354,9 @@ $(document).on('click', '.SessionDown', function () {
         }, 1500);
     }
     else {
-        SessionMove(index, -1)
+        let nextSession = MeetingSessions.children().eq(CurrSessionIndex + 1);
+        CurrSession.insertAfter(nextSession);
+        // SessionMove(index, -1)
     }
 })
 
