@@ -74,7 +74,7 @@ $(document).ready(function () {
         var formData = {
             meeting_info: meetingInfo,
             role_name_list: $('#role_name_list').val(),
-            agenda_content: GetAgendaContent() // $('#agenda_content').val()
+            agenda_content: GetAgendaContentAsDictList() // $('#agenda_content').val()
         };
 
         // Send the form data as JSON via a POST request

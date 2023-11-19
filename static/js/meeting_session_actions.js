@@ -18,6 +18,7 @@ function CreateSessionElement(data) {
 
     let Input_SessionName = $("<input />");
     Input_SessionName.attr("type", "text");
+    Input_SessionName.attr("id", "parentSessionName");
     Input_SessionName.addClass("form-control");
     if (data.Title === "")
         Input_SessionName.attr("placeholder", "请输入环节名称");
@@ -26,6 +27,7 @@ function CreateSessionElement(data) {
 
     let Input_SessionDuration = $("<input />");
     Input_SessionDuration.attr("type", "text");
+    Input_SessionDuration.attr("id", "parentSessionDuration");
     Input_SessionDuration.addClass("form-control");
     if (!("Duration" in data))
         Input_SessionDuration.attr("placeholder", "请输入环节时长");
@@ -33,10 +35,10 @@ function CreateSessionElement(data) {
         Input_SessionDuration.attr("value", data.Duration);
 
     //Add Operational Button
-    let Button_ChildSession_Add = GetButtonDom("info", "添加子环节", "AddChildSession");
-    let Button_Session_Up = GetButtonDom("primary", "上移本环节", "SessionUp");
-    let Button_Session_Down = GetButtonDom("warning", "下移本环节", "SessionDown");
-    let Button_Session_Del = GetButtonDom("danger", "删除本环节", "SessionDel");
+    let Button_ChildSession_Add = GetButtonDom("info", "+", "AddChildSession");
+    let Button_Session_Up = GetButtonDom("primary", "▲", "SessionUp");
+    let Button_Session_Down = GetButtonDom("warning", "▼", "SessionDown");
+    let Button_Session_Del = GetButtonDom("danger", "x", "SessionDel");
 
     let DivRow_InputGroup = GetDivDom();
     DivRow_InputGroup.addClass("input-group mb-3");
@@ -48,8 +50,26 @@ function CreateSessionElement(data) {
     Button_Session_Down.appendTo(DivRow_InputGroup);
     Button_Session_Del.appendTo(DivRow_InputGroup);
 
-    //Add Table
-    //Add thead
+    Table = createChildSessionsAsTable(data)
+
+    //Add Container
+    let DivContainer = GetDivDom();
+    // DivContainer.attr("id", NewSessionID);
+    DivContainer.addClass("parent-and-children-session"); //container-fluid
+    // DivRow_Title.appendTo(DivContainer);
+    DivRow_InputGroup.appendTo(DivContainer);
+    Table.appendTo(DivContainer);
+
+    let DivFormItem = $("#MeetingSession");
+    DivContainer.appendTo(DivFormItem);
+}
+
+function createChildSessionsAsTable(data) {
+    // Add thead
+    function GetThDom(text) {
+        return $("<th></th>").text(text);
+    }
+
     let th_Child_Num = GetThDom("序号");
     let th_Child_SessionName = GetThDom("子环节名称");
     let th_Child_Duration = GetThDom("子环节时间");
@@ -64,14 +84,15 @@ function CreateSessionElement(data) {
     th_Child_Operation.appendTo(thtrDom);
 
     let theadDom = $("<thead></thead>");
-    thtrDom.appendTo(theadDom);
+    // thtrDom.appendTo(theadDom);
 
     let Table = $("<table></table>");
     Table.addClass("table table-success table-bordered table-striped");
+    Table.attr("id", "childSessionsTable");
     theadDom.appendTo(Table);
 
-    //Add tbody
-    let tbodyDom = $("<tbody></tbody");
+    // Add tbody
+    let tbodyDom = $("<tbody></tbody>");
     if (data.ChildSessions && data.ChildSessions.length > 0) {
         for (let i = 0; i < data.ChildSessions.length; i++) {
             let tbtrDom = CreateChildSessionElement(data.ChildSessions[i]);
@@ -80,20 +101,9 @@ function CreateSessionElement(data) {
     }
     tbodyDom.appendTo(Table);
 
-    //Add Container
-    let DivContainer = GetDivDom();
-    // DivContainer.attr("id", NewSessionID);
-    DivContainer.addClass("bd-example"); //container-fluid
-    // DivRow_Title.appendTo(DivContainer);
-    DivRow_InputGroup.appendTo(DivContainer);
-    Table.appendTo(DivContainer);
-
-    let DivFormItem = $("#MeetingSession");
-    DivContainer.appendTo(DivFormItem);
+    return Table;
 }
 
-
-//Create Children Session
 function CreateChildSessionElement(data) {
     if (jQuery.isEmptyObject(data)) {
         data = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
@@ -102,28 +112,45 @@ function CreateChildSessionElement(data) {
     //Num
     let ChildNumCol = $("<th scope=\"row\" style=\"text-align: center;\">" + data.ChildIndex + "</th>")
 
-    //Children Session Name
-    let ChildSession_Name = $("<input type=\"text\"  class=\"form-control\" />")
+    // Create the sub-table
+    let subContentTable = $("<table></table>");
+    subContentTable.attr("id", "childsessionFieldsTable");
+    // Children Session Name
+    let ChildSession_Name = $("<input type=\"text\" class=\"form-control\" />");
+    ChildSession_Name.attr("id", "event_name");
+    let nameLabel = $("<label>议程</label>"); // Add label
     if (data.Name == "")
         ChildSession_Name.attr("placeholder", "请输入子环节名称");
     else
         ChildSession_Name.attr("value", data.Name);
-    let TD_Name = $("<td></td>");
-    ChildSession_Name.appendTo(TD_Name);
 
-    //Children Session Duration
-    let ChildSession_Duration = $("<input type=\"text\"  class=\"form-control\" />")
+    let row1 = $("<tr></tr>");
+    let labelCell = $("<td></td>").append(nameLabel);
+    let inputCell = $("<td></td>").append(ChildSession_Name);
+    row1.append(labelCell, inputCell);
+    row1.appendTo(subContentTable);
+
+    // Children Session Duration
+    let durationLabel = $("<label>时长</label>"); // Add label
+    let ChildSession_Duration = $("<input type=\"text\" class=\"form-control\" />");
+    ChildSession_Duration.attr("id", "duration");
     if (data.Duration == "")
         ChildSession_Duration.attr("placeholder", "请输入子环节时长");
     else
         ChildSession_Duration.attr("value", data.Duration);
-    let TD_Duration = $("<td></td>");
-    ChildSession_Duration.appendTo(TD_Duration);
+    let row2 = $("<tr></tr>");
+    $("<td></td>").append(durationLabel).appendTo(row2);
+    $("<td></td>").append(ChildSession_Duration).appendTo(row2);
+    row2.appendTo(subContentTable);
 
-    //Children Session Role
+    // Children Session Role
+    let roleSelectLabel = $("<label>角色</label>"); // Add label
     let ChildSession_Role = GetRoleSelect(data.Role);
-    let TD_Role = $("<td></td>");
-    ChildSession_Role.appendTo(TD_Role);
+    ChildSession_Role.attr("id", "role");
+    let row3 = $("<tr></tr>");
+    $("<td></td>").append(roleSelectLabel).appendTo(row3);
+    $("<td></td>").append(ChildSession_Role).appendTo(row3);
+    row3.appendTo(subContentTable);
 
     //Children Session Operation
     let btn_Child_Up = GetButtonDom("primary", "▲", "ChildSessionUp");
@@ -140,13 +167,69 @@ function CreateChildSessionElement(data) {
 
     let tbtrDom = $("<tr></tr>");
     ChildNumCol.appendTo(tbtrDom);
-    TD_Name.appendTo(tbtrDom);
-    TD_Duration.appendTo(tbtrDom);
-    TD_Role.appendTo(tbtrDom);
+    subContentTable.appendTo(tbtrDom)
+    // TD_Name.appendTo(tbtrDom);
+    // TD_Duration.appendTo(tbtrDom);
+    // TD_Role.appendTo(tbtrDom);
     TD_Btn.appendTo(tbtrDom);
 
     return tbtrDom;
 }
+
+//Create Children Session
+// function CreateChildSessionElement2(data) {
+//     if (jQuery.isEmptyObject(data)) {
+//         data = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
+//     }
+
+//     //Num
+//     let ChildNumCol = $("<th scope=\"row\" style=\"text-align: center;\">" + data.ChildIndex + "</th>")
+
+//     //Children Session Name
+//     let ChildSession_Name = $("<input type=\"text\"  class=\"form-control\" />")
+//     if (data.Name == "")
+//         ChildSession_Name.attr("placeholder", "请输入子环节名称");
+//     else
+//         ChildSession_Name.attr("value", data.Name);
+//     let TD_Name = $("<td></td>");
+//     ChildSession_Name.appendTo(TD_Name);
+
+//     //Children Session Duration
+//     let ChildSession_Duration = $("<input type=\"text\"  class=\"form-control\" />")
+//     if (data.Duration == "")
+//         ChildSession_Duration.attr("placeholder", "请输入子环节时长");
+//     else
+//         ChildSession_Duration.attr("value", data.Duration);
+//     let TD_Duration = $("<td></td>");
+//     ChildSession_Duration.appendTo(TD_Duration);
+
+//     //Children Session Role
+//     let ChildSession_Role = GetRoleSelect(data.Role);
+//     let TD_Role = $("<td></td>");
+//     ChildSession_Role.appendTo(TD_Role);
+
+//     //Children Session Operation
+//     let btn_Child_Up = GetButtonDom("primary", "▲", "ChildSessionUp");
+//     let btn_Child_Down = GetButtonDom("warning", "▼", "ChildSessionDown");
+//     let btn_Child_Del = GetButtonDom("danger", "×", "ChildSessionDel");
+
+//     let Center_Btn = $("<center></center>");
+//     Center_Btn.append(btn_Child_Up);
+//     Center_Btn.append(btn_Child_Down);
+//     Center_Btn.append(btn_Child_Del);
+
+//     let TD_Btn = $("<td></td>");
+//     TD_Btn.append(Center_Btn);
+
+//     let tbtrDom = $("<tr></tr>");
+//     ChildNumCol.appendTo(tbtrDom);
+//     TD_Name.appendTo(tbtrDom);
+//     TD_Duration.appendTo(tbtrDom);
+//     TD_Role.appendTo(tbtrDom);
+//     TD_Btn.appendTo(tbtrDom);
+
+//     return tbtrDom;
+// }
 
 function GetDivDom() {
     let div = $("<div></div>");
@@ -203,6 +286,55 @@ function GetRoleSelect(SelectedRole) {
     }
 
     return SelectDom;
+}
+
+function GetAgendaContentAsDictList() {
+    function ParseChildSession(sessionRow) {
+        let childsessionFieldsTable = $(sessionRow).find("#childsessionFieldsTable");
+        let fieldData = {};
+      
+        childsessionFieldsTable.find("tr").each(function (index, fieldRow) {
+          let fieldObject = $(fieldRow).find("input.form-control, select.form-control");
+          let fieldName = fieldObject.attr("id");
+          let fieldContent = fieldObject.val();
+      
+          // Save fieldName as key and fieldContent as value in the dictionary
+          fieldData[fieldName] = fieldContent;
+        });
+      
+        return fieldData;
+      }
+
+    function ParseChildSessions(parentSession) {
+        let childSessionList = [];
+        // Every child session has event_name, duration and role.
+        childSessionsTable = $(parentSession).find("#childSessionsTable");
+        childSessionsTable.children("tbody").children("tr").each(function (index, sessionRow) {
+        let session_dict = ParseChildSession(sessionRow);
+            childSessionList.push(session_dict);
+          });
+        return childSessionList;
+    }
+
+    let agendaContentList = [];
+    let DivDom = $("#MeetingSession");
+    DivDom.children().each(function (index, parentSession) {
+        var parentSessionName = $(parentSession).find("#parentSessionName");
+        var parentSessionDuration = $(parentSession).find("#parentSessionDuration");
+        var parentSessionContentDict = {
+            event_name: parentSessionName.val()
+        };
+        if (parentSessionDuration.val() != "") {
+            parentSessionContentDict["duration"] = parentSessionDuration.val()
+        }
+        let childSessionList = ParseChildSessions(parentSession);
+        if(childSessionList.length!==0){
+            parentSessionContentDict["child_events"] = childSessionList;
+        }
+        agendaContentList.push(parentSessionContentDict);
+    });
+    // console.log(agendaContentList);
+    return agendaContentList;
 }
 
 function GetAgendaContent() {
@@ -360,9 +492,9 @@ function GetTableRowIndex(CurrIndex, Type) {
 
 
 $(document).on('click', '.ChildSessionUp', function () {
-    let trDom = $(this).parent().parent().parent();
-    let index = trDom.children().eq(0).text();
-    if (index == 1) {
+    let ChildSessioTbodyDom = $(this).parent().parent().parent().parent();
+    let CurrChildSessioIndex = getChildSessionRowIndex($(this), ChildSessioTbodyDom);
+    if (CurrChildSessioIndex == 0) {
         $('#Submitted_Content').empty();
         $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是第一位，无法上移</div>');
         $('#staticBackdrop').modal('show');
@@ -373,17 +505,34 @@ $(document).on('click', '.ChildSessionUp', function () {
         }, 1500);
     }
     else {
-        let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
-        let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
-        let CurrIndex = trDom.children().eq(0).text();
-        ChildSessioinMove(CurrIndex, 1, tbodyDom);
+        moveChildSessioinRowUp(ChildSessioTbodyDom, CurrChildSessioIndex)
     }
 })
 
+function getChildSessionRowIndex(clickedButton, tbodyDom) {
+    // Find the parent row of the clicked button
+    var row = $(clickedButton).closest('tr');
+
+    // Get the index of the row within the table body
+    var rowIndex = $(tbodyDom).children('tr').index(row);
+
+    // Return the row index
+    return rowIndex;
+}
+
+function moveChildSessioinRowUp(tbodyDom, rowIndex) {
+    var rowToMove = $(tbodyDom).children('tr').eq(rowIndex);
+    // Get the previous row
+    var previousRow = rowToMove.prev();
+    // Move the row
+    rowToMove.insertBefore(previousRow);
+}
+
 $(document).on('click', ".ChildSessionDown", function () {
-    let trDom = $(this).parent().parent().parent();
-    let index = trDom.children().eq(0).text();
-    if (index == trDom.parent().children().length) {
+    let ChildSessioTbodyDom = $(this).parent().parent().parent().parent();
+    let CurrChildSessioIndex = getChildSessionRowIndex($(this), ChildSessioTbodyDom);
+    let LargestRowIndex = ChildSessioTbodyDom.children('tr').length - 1;
+    if (CurrChildSessioIndex == LargestRowIndex) {
         $('#Submitted_Content').empty();
         $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是最后一位，无法下移</div>');
         $('#staticBackdrop').modal('show');
@@ -394,25 +543,33 @@ $(document).on('click', ".ChildSessionDown", function () {
         }, 1500);
     }
     else {
-        let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
-        let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
-        let CurrIndex = trDom.children().eq(0).text();
-        ChildSessioinMove(CurrIndex, -1, tbodyDom);
+        moveChildSessionRowDown(ChildSessioTbodyDom, CurrChildSessioIndex);
     }
 })
 
+function moveChildSessionRowDown(tbodyDom, rowIndex) {
+    var rowToMove = $(tbodyDom).children('tr').eq(rowIndex);
+    // Get the next row
+    var nextRow = rowToMove.next();
+    // Move the row
+    rowToMove.insertAfter(nextRow);
+}
+
 $(document).on('click', ".ChildSessionDel", function () {
-    let trDom = $(this).parent().parent().parent();
-    let index = trDom.children().eq(0).text();
+    let ChildSessioTbodyDom = $(this).parent().parent().parent().parent();
+    let CurrChildSessioIndex = getChildSessionRowIndex($(this), ChildSessioTbodyDom);
+    ChildSessioTbodyDom.children('tr').eq(CurrChildSessioIndex).remove();
+    // let trDom = $(this).parent().parent().parent();
+    // let index = trDom.children().eq(0).text();
 
-    let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
-    let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
-    if (index < trDom.parent().children().length) {
-        let CurrIndex = trDom.children().eq(0).text();
-        ChildSessioinMove(CurrIndex, CurrIndex - tbodyDom.children().length, tbodyDom);
-    }
+    // let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
+    // let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
+    // if (index < trDom.parent().children().length) {
+    //     let CurrIndex = trDom.children().eq(0).text();
+    //     ChildSessioinMove(CurrIndex, CurrIndex - tbodyDom.children().length, tbodyDom);
+    // }
 
-    tbodyDom.children().last().remove();
+    // tbodyDom.children().last().remove();
 })
 
 function ChildSessioinMove(CurrIndex, span, tbodyDom) {
