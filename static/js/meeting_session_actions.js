@@ -11,17 +11,12 @@ function CreateSessionElement(data) {
     else
         NewSessionID += data.Index;
 
-    //Add Title
-    let Span_SessionNum = $("<span></span>");
-    Span_SessionNum.addClass("input-group-text");
-    Span_SessionNum.text(data.Index);
-
     let Input_SessionName = $("<input />");
     Input_SessionName.attr("type", "text");
     Input_SessionName.attr("id", "parentSessionName");
     Input_SessionName.addClass("form-control");
     if (data.Title === "")
-        Input_SessionName.attr("placeholder", "请输入环节名称");
+        Input_SessionName.attr("placeholder", "环节名称");
     else
         Input_SessionName.attr("value", data.Title);
 
@@ -30,7 +25,7 @@ function CreateSessionElement(data) {
     Input_SessionDuration.attr("id", "parentSessionDuration");
     Input_SessionDuration.addClass("form-control");
     if (!("Duration" in data))
-        Input_SessionDuration.attr("placeholder", "请输入环节时长");
+        Input_SessionDuration.attr("placeholder", "时长");
     else
         Input_SessionDuration.attr("value", data.Duration);
 
@@ -42,7 +37,6 @@ function CreateSessionElement(data) {
 
     let DivRow_InputGroup = GetDivDom();
     DivRow_InputGroup.addClass("input-group mb-3");
-    Span_SessionNum.appendTo(DivRow_InputGroup);
     Input_SessionName.appendTo(DivRow_InputGroup);
     Input_SessionDuration.appendTo(DivRow_InputGroup);
     Button_ChildSession_Add.appendTo(DivRow_InputGroup);
@@ -50,45 +44,23 @@ function CreateSessionElement(data) {
     Button_Session_Down.appendTo(DivRow_InputGroup);
     Button_Session_Del.appendTo(DivRow_InputGroup);
 
-    Table = createChildSessionsAsTable(data)
+    ChildSessionsTable = createChildSessionsAsTable(data)
 
     //Add Container
     let DivContainer = GetDivDom();
     DivContainer.addClass("parent-and-children-session"); //container-fluid
     // DivRow_Title.appendTo(DivContainer);
     DivRow_InputGroup.appendTo(DivContainer);
-    Table.appendTo(DivContainer);
+    ChildSessionsTable.appendTo(DivContainer);
 
     let DivFormItem = $("#MeetingSession");
     DivContainer.appendTo(DivFormItem);
 }
 
 function createChildSessionsAsTable(data) {
-    // Add thead
-    function GetThDom(text) {
-        return $("<th></th>").text(text);
-    }
-
-    let th_Child_Num = GetThDom("序号");
-    let th_Child_SessionName = GetThDom("子环节名称");
-    let th_Child_Duration = GetThDom("子环节时间");
-    let th_Child_Role = GetThDom("选择角色");
-    let th_Child_Operation = GetThDom("子环节操作");
-
-    let thtrDom = $("<tr></tr>");
-    th_Child_Num.appendTo(thtrDom);
-    th_Child_SessionName.appendTo(thtrDom);
-    th_Child_Duration.appendTo(thtrDom);
-    th_Child_Role.appendTo(thtrDom);
-    th_Child_Operation.appendTo(thtrDom);
-
-    let theadDom = $("<thead></thead>");
-    // thtrDom.appendTo(theadDom);
-
     let Table = $("<table></table>");
     Table.addClass("table table-success table-bordered table-striped");
     Table.attr("id", "childSessionsTable");
-    theadDom.appendTo(Table);
 
     // Add tbody
     let tbodyDom = $("<tbody></tbody>");
@@ -103,17 +75,11 @@ function createChildSessionsAsTable(data) {
     return Table;
 }
 
-function CreateChildSessionElement(data) {
-    if (jQuery.isEmptyObject(data)) {
-        data = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
-    }
-
-    //Num
-    let ChildNumCol = $("<th scope=\"row\" style=\"text-align: center;\">" + data.ChildIndex + "</th>")
-
+function CreateSubTableInChildSession(data) {
     // Create the sub-table
     let subContentTable = $("<table></table>");
     subContentTable.attr("id", "childsessionFieldsTable");
+
     // Children Session Name
     let ChildSession_Name = $("<input type=\"text\" class=\"form-control\" />");
     ChildSession_Name.attr("id", "event_name");
@@ -150,8 +116,10 @@ function CreateChildSessionElement(data) {
     $("<td></td>").append(roleSelectLabel).appendTo(row3);
     $("<td></td>").append(ChildSession_Role).appendTo(row3);
     row3.appendTo(subContentTable);
+    return subContentTable;
+}
 
-    //Children Session Operation
+function CreateChildSessionActionButtonGroup() {
     let btn_Child_Up = GetButtonDom("primary", "▲", "ChildSessionUp");
     let btn_Child_Down = GetButtonDom("warning", "▼", "ChildSessionDown");
     let btn_Child_Del = GetButtonDom("danger", "×", "ChildSessionDel");
@@ -160,16 +128,24 @@ function CreateChildSessionElement(data) {
     Center_Btn.append(btn_Child_Up);
     Center_Btn.append(btn_Child_Down);
     Center_Btn.append(btn_Child_Del);
+    return Center_Btn;
+}
+
+function CreateChildSessionElement(data) {
+    if (jQuery.isEmptyObject(data)) {
+        data = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
+    }
+
+    let subContentTable = CreateSubTableInChildSession(data);
+
+    //Children Session Operation
+    let Center_Btn = CreateChildSessionActionButtonGroup();
 
     let TD_Btn = $("<td></td>");
     TD_Btn.append(Center_Btn);
 
     let tbtrDom = $("<tr></tr>");
-    ChildNumCol.appendTo(tbtrDom);
     subContentTable.appendTo(tbtrDom)
-    // TD_Name.appendTo(tbtrDom);
-    // TD_Duration.appendTo(tbtrDom);
-    // TD_Role.appendTo(tbtrDom);
     TD_Btn.appendTo(tbtrDom);
 
     return tbtrDom;
@@ -196,13 +172,6 @@ function GetButtonDom(color, name, classNameForClick) {
     button.text(name);
 
     return button;
-}
-
-function GetThDom(colName) {
-    let thDom = $("<th>" + colName + "</th>");
-    thDom.attr("scope", "col");
-    thDom.attr("style", 'style="text-align: center;"');
-    return thDom;
 }
 
 //Get Role Select
@@ -236,27 +205,27 @@ function GetAgendaContentAsDictList() {
     function ParseChildSession(sessionRow) {
         let childsessionFieldsTable = $(sessionRow).find("#childsessionFieldsTable");
         let fieldData = {};
-      
+
         childsessionFieldsTable.find("tr").each(function (index, fieldRow) {
-          let fieldObject = $(fieldRow).find("input.form-control, select.form-control");
-          let fieldName = fieldObject.attr("id");
-          let fieldContent = fieldObject.val();
-      
-          // Save fieldName as key and fieldContent as value in the dictionary
-          fieldData[fieldName] = fieldContent;
+            let fieldObject = $(fieldRow).find("input.form-control, select.form-control");
+            let fieldName = fieldObject.attr("id");
+            let fieldContent = fieldObject.val();
+
+            // Save fieldName as key and fieldContent as value in the dictionary
+            fieldData[fieldName] = fieldContent;
         });
-      
+
         return fieldData;
-      }
+    }
 
     function ParseChildSessions(parentSession) {
         let childSessionList = [];
         // Every child session has event_name, duration and role.
-        childSessionsTable = $(parentSession).find("#childSessionsTable");
+        let childSessionsTable = $(parentSession).find("#childSessionsTable");
         childSessionsTable.children("tbody").children("tr").each(function (index, sessionRow) {
-        let session_dict = ParseChildSession(sessionRow);
+            let session_dict = ParseChildSession(sessionRow);
             childSessionList.push(session_dict);
-          });
+        });
         return childSessionList;
     }
 
@@ -272,7 +241,7 @@ function GetAgendaContentAsDictList() {
             parentSessionContentDict["duration"] = parentSessionDuration.val()
         }
         let childSessionList = ParseChildSessions(parentSession);
-        if(childSessionList.length!==0){
+        if (childSessionList.length !== 0) {
             parentSessionContentDict["child_events"] = childSessionList;
         }
         agendaContentList.push(parentSessionContentDict);
@@ -301,20 +270,22 @@ function GetAgendaContent() {
 }
 
 $(document).on('click', ".AddChildSession", function () {
+    let CurrSession = getCurrentSessionFromOperationButton($(this));
+    let childSessionsTable = $(CurrSession).find("#childSessionsTable");
 
-    let tbodyDom = $(this).parent().next().children().eq(1);
-    let newIndex = tbodyDom.children().length + 1;
-
-
-    let NewChildSessionData = { ChildIndex: newIndex, Name: "", Duration: 0, Role: "" };
-    let newTbTrDom = CreateChildSessionElement(NewChildSessionData);
-    tbodyDom.append(newTbTrDom);
-
+    // TODO: deprecate ChildIndex.
+    let NewChildSessionData = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
+    let NewChildSession = CreateChildSessionElement(NewChildSessionData);
+    childSessionsTable.append(NewChildSession);
 })
+
+function getCurrentSessionFromOperationButton(button) {
+    return $(button).parent().parent();
+}
 
 // bind Session Up Method
 $(document).on('click', '.SessionUp', function () {
-    let CurrSession = $(this).parent().parent()
+    let CurrSession = getCurrentSessionFromOperationButton($(this));
     let MeetingSessions = $("#MeetingSession");
     let CurrSessionIndex = MeetingSessions.children().index(CurrSession);
     // Check the index
@@ -343,7 +314,7 @@ $(document).on('click', '.SessionDown', function () {
     let MeetingSessions = $("#MeetingSession");
     let CurrSessionIndex = MeetingSessions.children().index(CurrSession);
     let SessionsCount = MeetingSessions.children().length;
-    if (CurrSessionIndex == SessionsCount-1) {
+    if (CurrSessionIndex == SessionsCount - 1) {
         $('#Submitted_Content').empty();
         $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">已经是最后一位，无法下移</div>');
         $('#staticBackdrop').modal('show');
@@ -361,15 +332,17 @@ $(document).on('click', '.SessionDown', function () {
 })
 
 $(document).on('click', '.SessionDel', function () {
-    let index = parseInt($(this).parent().children().eq(0).text());
-    let SessionsCount = $("#MeetingSession").children().length;
-    if (index < SessionsCount) {
-        console.log("Down the Session")
-        SessionMove(index, index - SessionsCount);
-    }
+    let CurrSession = $(this).parent().parent()
+    CurrSession.remove();
+    // let index = parseInt($(this).parent().children().eq(0).text());
+    // let SessionsCount = $("#MeetingSession").children().length;
+    // if (index < SessionsCount) {
+    //     console.log("Down the Session")
+    //     SessionMove(index, index - SessionsCount);
+    // }
 
-    //删除最后一个子元素
-    $("#MeetingSession").children().last().remove();
+    // //删除最后一个子元素
+    // $("#MeetingSession").children().last().remove();
 })
 
 function SessionMove(CurrIndex, span) {

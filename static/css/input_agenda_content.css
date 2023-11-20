@@ -8,3 +8,15 @@
     display: flex;
     align-items: center;
 }
+
+#childsessionFieldsTable td:first-child {
+    width: 150px;
+  }
+  
+  #childsessionFieldsTable td:last-child {
+    width: 2250px; /* Adjust the width as desired */
+  }
+
+  #childsessionFieldsTable td.td-btn {
+    width: 20px; /* Adjust the width as desired */
+  }
