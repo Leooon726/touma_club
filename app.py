@@ -186,4 +186,4 @@ def export_pdf():
 
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5534)
+    app.run(debug=True)
