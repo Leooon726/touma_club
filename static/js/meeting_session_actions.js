@@ -182,7 +182,6 @@ function GetButtonDom(color, name, classNameForClick) {
 }
 
 function updateRoleSelect(selectElement, selectedRole) {
-    console.log(selectedRole)
     let RoleData = updatedRoleNameTextBoxContent;
   
     // Clear existing options
