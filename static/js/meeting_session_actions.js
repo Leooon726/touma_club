@@ -1,3 +1,10 @@
+let updatedRoleNameTextBoxContent = $("#role_name_list").val();
+
+$("#role_name_list").on("input", function() {
+  updatedRoleNameTextBoxContent = $(this).val();
+});
+
+
 function CreateSessionElement(data) {
     let NewSessionID = "Session_";  //Get Session ID
     if (jQuery.isEmptyObject(data)) {
@@ -174,32 +181,71 @@ function GetButtonDom(color, name, classNameForClick) {
     return button;
 }
 
-//Get Role Select
-function GetRoleSelect(SelectedRole) {
-    let RoleData = $("#role_name_list").text();
-    // console.log(RoleData);
-
+function updateRoleSelect(selectElement, selectedRole) {
+    console.log(selectedRole)
+    let RoleData = updatedRoleNameTextBoxContent;
+  
+    // Clear existing options
+    selectElement.empty();
+  
+    // Add new options
+    let OptionsDom_Default = $("<option value=\"\">请选择角色</option>");
+    OptionsDom_Default.appendTo(selectElement);
+  
+    let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
+    for (let r = 0; r < RoleArr.length; r++) {
+      if (RoleArr[r] != "") {
+        let role = $.trim(RoleArr[r].split(/:|：/)[0]);
+        let OptionStr_Role = "<option value=\"" + role + "\"";
+        if (role == selectedRole)
+          OptionStr_Role += " selected";
+        OptionStr_Role += ">" + role + "</option>";
+  
+        let OptionDom_Role = $(OptionStr_Role);
+        OptionDom_Role.appendTo(selectElement);
+      }
+    }
+  }
+  
+  function GetRoleSelect(SelectedRole) {
     let SelectDom = $("<select class=\"form-control\"></select>");
     let OptionsDom_Default = $("<option value=\"\">请选择角色</option>");
     OptionsDom_Default.appendTo(SelectDom);
-
-    //Split Role Message
-    let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
-    for (let r = 0; r < RoleArr.length; r++) {
-        if (RoleArr[r] != "") {
-            let role = $.trim(RoleArr[r].split(':')[0]);
-            let OptionStr_Role = "<option value=\"" + role + "\"";
-            if (role == SelectedRole)
-                OptionStr_Role += " selected"
-            OptionStr_Role += ">" + role + "</option>";
-
-            let OptionDom_Role = $(OptionStr_Role);
-            OptionDom_Role.appendTo(SelectDom);
-        }
-    }
-
+    updateRoleSelect(SelectDom, SelectedRole);
+  
+    // Add click event handler
+    SelectDom.on("focus", function() {
+      updateRoleSelect(SelectDom, SelectedRole);
+    });
+  
     return SelectDom;
-}
+  }
+
+// function GetRoleSelect(SelectedRole) {
+//     let RoleData = $("#role_name_list").text();
+//     // console.log(RoleData);
+
+//     let SelectDom = $("<select class=\"form-control\"></select>");
+//     let OptionsDom_Default = $("<option value=\"\">请选择角色</option>");
+//     OptionsDom_Default.appendTo(SelectDom);
+
+//     //Split Role Message
+//     let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
+//     for (let r = 0; r < RoleArr.length; r++) {
+//         if (RoleArr[r] != "") {
+//             let role = $.trim(RoleArr[r].split(':')[0]);
+//             let OptionStr_Role = "<option value=\"" + role + "\"";
+//             if (role == SelectedRole)
+//                 OptionStr_Role += " selected"
+//             OptionStr_Role += ">" + role + "</option>";
+
+//             let OptionDom_Role = $(OptionStr_Role);
+//             OptionDom_Role.appendTo(SelectDom);
+//         }
+//     }
+
+//     return SelectDom;
+// }
 
 function GetAgendaContentAsDictList() {
     function ParseChildSession(sessionRow) {
