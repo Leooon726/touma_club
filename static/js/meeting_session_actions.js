@@ -1,9 +1,35 @@
 let updatedRoleNameTextBoxContent = $("#role_name_list").val();
 
-$("#role_name_list").on("input", function() {
-  updatedRoleNameTextBoxContent = $(this).val();
+$("#role_name_list").on("input", function () {
+    updatedRoleNameTextBoxContent = $(this).val();
 });
 
+function CreateDurationInputBox(data={}) {
+    let container = $("<div></div>"); // Create a container to hold the label and input box
+    container.addClass("input-parent-session-duration-container"); // Add a CSS class to style the container
+    container.attr("id", "childSessionDurationInputBox");
+
+    let label = $("<span>时长(分钟)</span>"); // Create the label element with the desired text
+    label.addClass("input-parent-session-duration-label"); // Add a CSS class to style the label if needed
+
+    let input = $("<input />"); // Create the input element
+    input.attr("type", "text");
+    input.attr("id", "parentSessionDuration");
+    input.addClass("form-control");
+
+    if (!("Duration" in data)) {
+        input.attr("placeholder", "时长默认为0分钟");
+        input.attr("value", "0"); // Set the value as "0"
+    }
+    else {
+        input.attr("value", data.Duration);
+    }
+
+    container.append(label); // Append the label before the input box
+    container.append(input); // Append the input box
+
+    return container; // Return the container element
+}
 
 function CreateSessionElement(data) {
     let NewSessionID = "Session_";  //Get Session ID
@@ -18,6 +44,10 @@ function CreateSessionElement(data) {
     else
         NewSessionID += data.Index;
 
+    let foldButton = $("<button />");
+    foldButton.addClass("fold-button");
+    foldButton.text(">");
+
     let Input_SessionName = $("<input />");
     Input_SessionName.attr("type", "text");
     Input_SessionName.attr("id", "parentSessionName");
@@ -27,15 +57,6 @@ function CreateSessionElement(data) {
     else
         Input_SessionName.attr("value", data.Title);
 
-    let Input_SessionDuration = $("<input />");
-    Input_SessionDuration.attr("type", "text");
-    Input_SessionDuration.attr("id", "parentSessionDuration");
-    Input_SessionDuration.addClass("form-control");
-    if (!("Duration" in data))
-        Input_SessionDuration.attr("placeholder", "时长");
-    else
-        Input_SessionDuration.attr("value", data.Duration);
-
     //Add Operational Button
     let Button_ChildSession_Add = GetButtonDom("info", "+", "AddChildSession");
     let Button_Session_Up = GetButtonDom("primary", "▲", "SessionUp");
@@ -44,19 +65,41 @@ function CreateSessionElement(data) {
 
     let DivRow_InputGroup = GetDivDom();
     DivRow_InputGroup.addClass("input-group mb-3");
+    foldButton.appendTo(DivRow_InputGroup);
     Input_SessionName.appendTo(DivRow_InputGroup);
-    Input_SessionDuration.appendTo(DivRow_InputGroup);
+    // Input_SessionDuration.appendTo(DivRow_InputGroup);
     Button_ChildSession_Add.appendTo(DivRow_InputGroup);
     Button_Session_Up.appendTo(DivRow_InputGroup);
     Button_Session_Down.appendTo(DivRow_InputGroup);
     Button_Session_Del.appendTo(DivRow_InputGroup);
 
-    ChildSessionsTable = createChildSessionsAsTable(data)
+    let ChildSessionsTable;
+    if (data.ChildSessions && data.ChildSessions.length > 0) {
+        ChildSessionsTable = createChildSessionsAsTable(data)
+    } else {
+        ChildSessionsTable = CreateDurationInputBox(data);
+    }
+    ChildSessionsTable.hide(); // Hide the ChildSessionsTable by default
+
+    // Add click event handler to the foldButton
+    foldButton.on("click", function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+        foldButtonParent = foldButton.parent().parent()
+        let targetObjectToBeFolded = foldButtonParent.find("#childSessionDurationInputBox, #childSessionsTable");
+
+        targetObjectToBeFolded.toggle(); // Toggle the visibility of the ChildSessionsTable
+
+        // Update the foldButton text based on the visibility of ChildSessionsTable
+        if (targetObjectToBeFolded.is(":visible")) {
+            foldButton.text("v"); // Change the button text to "v" when ChildSessionsTable is visible
+        } else {
+            foldButton.text(">"); // Change the button text back to ">" when ChildSessionsTable is hidden
+        }
+    });
 
     //Add Container
     let DivContainer = GetDivDom();
     DivContainer.addClass("parent-and-children-session"); //container-fluid
-    // DivRow_Title.appendTo(DivContainer);
     DivRow_InputGroup.appendTo(DivContainer);
     ChildSessionsTable.appendTo(DivContainer);
 
@@ -64,14 +107,18 @@ function CreateSessionElement(data) {
     DivContainer.appendTo(DivFormItem);
 }
 
-function createChildSessionsAsTable(data) {
+function hasKeyInDictionary(key, dictionary) {
+    return $.inArray(key, Object.keys(dictionary)) !== -1;
+  }
+
+function createChildSessionsAsTable(data={}) {
     let Table = $("<table></table>");
     Table.addClass("table table-success table-bordered table-striped");
     Table.attr("id", "childSessionsTable");
 
     // Add tbody
     let tbodyDom = $("<tbody></tbody>");
-    if (data.ChildSessions && data.ChildSessions.length > 0) {
+    if (hasKeyInDictionary('ChildSessions', data) && data.ChildSessions && data.ChildSessions.length > 0) {
         for (let i = 0; i < data.ChildSessions.length; i++) {
             let tbtrDom = CreateChildSessionElement(data.ChildSessions[i]);
             tbtrDom.appendTo(tbodyDom);
@@ -183,42 +230,42 @@ function GetButtonDom(color, name, classNameForClick) {
 
 function updateRoleSelect(selectElement, selectedRole) {
     let RoleData = updatedRoleNameTextBoxContent;
-  
+
     // Clear existing options
     selectElement.empty();
-  
+
     // Add new options
     let OptionsDom_Default = $("<option value=\"\">请选择角色</option>");
     OptionsDom_Default.appendTo(selectElement);
-  
+
     let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
     for (let r = 0; r < RoleArr.length; r++) {
-      if (RoleArr[r] != "") {
-        let role = $.trim(RoleArr[r].split(/:|：/)[0]);
-        let OptionStr_Role = "<option value=\"" + role + "\"";
-        if (role == selectedRole)
-          OptionStr_Role += " selected";
-        OptionStr_Role += ">" + role + "</option>";
-  
-        let OptionDom_Role = $(OptionStr_Role);
-        OptionDom_Role.appendTo(selectElement);
-      }
+        if (RoleArr[r] != "") {
+            let role = $.trim(RoleArr[r].split(/:|：/)[0]);
+            let OptionStr_Role = "<option value=\"" + role + "\"";
+            if (role == selectedRole)
+                OptionStr_Role += " selected";
+            OptionStr_Role += ">" + role + "</option>";
+
+            let OptionDom_Role = $(OptionStr_Role);
+            OptionDom_Role.appendTo(selectElement);
+        }
     }
-  }
-  
-  function GetRoleSelect(SelectedRole) {
+}
+
+function GetRoleSelect(SelectedRole) {
     let SelectDom = $("<select class=\"form-control\"></select>");
     let OptionsDom_Default = $("<option value=\"\">请选择角色</option>");
     OptionsDom_Default.appendTo(SelectDom);
     updateRoleSelect(SelectDom, SelectedRole);
-  
+
     // Add click event handler
-    SelectDom.on("focus", function() {
-      updateRoleSelect(SelectDom, SelectedRole);
+    SelectDom.on("focus", function () {
+        updateRoleSelect(SelectDom, SelectedRole);
     });
-  
+
     return SelectDom;
-  }
+}
 
 // function GetRoleSelect(SelectedRole) {
 //     let RoleData = $("#role_name_list").text();
@@ -317,6 +364,16 @@ function GetAgendaContent() {
 $(document).on('click', ".AddChildSession", function () {
     let CurrSession = getCurrentSessionFromOperationButton($(this));
     let childSessionsTable = $(CurrSession).find("#childSessionsTable");
+    
+    // If cannot find #childSessionsTable, create one by calling createChildSessionsAsTable.
+    if (childSessionsTable.length === 0) {
+        childSessionsTable = createChildSessionsAsTable();
+        $(CurrSession).append(childSessionsTable);
+        let inputDurationContainer = $(CurrSession).find(".input-parent-session-duration-container");
+        if (inputDurationContainer.length > 0) {
+            inputDurationContainer.remove();
+        }
+    }
 
     // TODO: deprecate ChildIndex.
     let NewChildSessionData = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
@@ -530,17 +587,15 @@ $(document).on('click', ".ChildSessionDel", function () {
     let ChildSessioTbodyDom = $(this).parent().parent().parent().parent();
     let CurrChildSessioIndex = getChildSessionRowIndex($(this), ChildSessioTbodyDom);
     ChildSessioTbodyDom.children('tr').eq(CurrChildSessioIndex).remove();
-    // let trDom = $(this).parent().parent().parent();
-    // let index = trDom.children().eq(0).text();
 
-    // let SessionIndex = trDom.parent().parent().prev().children().eq(0).text();
-    // let tbodyDom = $("#MeetingSession").children().eq(SessionIndex - 1).children().eq(1).children().eq(1);
-    // if (index < trDom.parent().children().length) {
-    //     let CurrIndex = trDom.children().eq(0).text();
-    //     ChildSessioinMove(CurrIndex, CurrIndex - tbodyDom.children().length, tbodyDom);
-    // }
-
-    // tbodyDom.children().last().remove();
+    // If ChildSessioTbodyDom do not have any child any more, remove the table and create an input duration box.
+    if (ChildSessioTbodyDom.children().length === 0) {
+        let ChildSessioTable = ChildSessioTbodyDom.closest("table");
+        let parentSession = ChildSessioTable.parent();
+        ChildSessioTable.remove();
+        let durationInputBox = CreateDurationInputBox();
+        durationInputBox.appendTo(parentSession);
+    }
 })
 
 function ChildSessioinMove(CurrIndex, span, tbodyDom) {

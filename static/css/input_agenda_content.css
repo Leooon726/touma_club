@@ -20,3 +20,12 @@
   #childsessionFieldsTable td.td-btn {
     width: 20px; /* Adjust the width as desired */
   }
+
+.input-parent-session-duration-container {
+    display: flex;
+    align-items: center;
+}
+
+.input-parent-session-duration-label {
+  width: 100px; /* Adjust the width to your desired value */
+}
