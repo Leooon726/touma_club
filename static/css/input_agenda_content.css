@@ -29,3 +29,32 @@
 .input-parent-session-duration-label {
   width: 100px; /* Adjust the width to your desired value */
 }
+
+.child-session {
+  background-color: lightblue;
+}
+
+.child-session > * {
+  margin: 10px;
+}
+
+#childsessionFieldsContainer #duration {
+  width: 150px; /* Set your desired fixed width */
+}
+
+#childsessionFieldsContainer #role {
+  width: 150px; /* Set your desired fixed width */
+}
+
+#childsessionFieldsContainer .row-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Optional: Add margin between rows */
+}
+
+#childsessionFieldsContainer .row-container label {
+  width: 50px; /* Set the desired width */
+  display: inline-block;
+  text-align: left;
+  margin-right: 10px;
+}

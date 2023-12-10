@@ -139,49 +139,64 @@ function GetRoleSelect(SelectedRole) {
 }
 
 function CreateFieldContainerInChildSession(data) {
+    function createDurationContainer(data) {
+        // Children Session Duration
+        let durationLabel = $("<label>时长</label>"); // Add label
+        let ChildSession_Duration = $("<input type=\"text\" class=\"form-control\" />");
+        ChildSession_Duration.addClass("user-input-content");
+        ChildSession_Duration.attr("id", "duration");
+        if (data.Duration == "")
+            ChildSession_Duration.attr("placeholder", "请输入子环节时长");
+        else
+            ChildSession_Duration.attr("value", data.Duration);
+
+        let durationContainer = $("<div class=\"row-container\"></div>"); // Add the row-container class
+        durationContainer.append(durationLabel);
+        durationContainer.append(ChildSession_Duration);
+        return durationContainer;
+    }
+    function createEventNameContainer(data) {
+        // Children Session Name
+        let ChildSession_Name = $("<input type=\"text\" class=\"form-control\" />");
+        ChildSession_Name.addClass("user-input-content");
+        ChildSession_Name.attr("id", "event_name");
+        // let nameLabel = $("<label>议程</label>"); // Add label
+        if (data.Name == "")
+            ChildSession_Name.attr("placeholder", "请输入子环节名称");
+        else
+            ChildSession_Name.attr("value", data.Name);
+
+        let nameContainer = $("<div class=\"row-container\"></div>");
+        // nameContainer.append(nameLabel);
+        nameContainer.append(ChildSession_Name);
+        return nameContainer;
+    }
+    
+    function createRoleContainer(data) {
+        let roleSelectLabel = $("<label>角色</label>"); // Add label
+        let ChildSession_Role = GetRoleSelect(data.Role);
+        ChildSession_Role.addClass("user-input-content");
+        ChildSession_Role.attr("id", "role");
+    
+        let roleContainer = $("<div class=\"row-container\"></div>");
+        roleContainer.append(roleSelectLabel);
+        roleContainer.append(ChildSession_Role);
+        return roleContainer;
+    }
+
     // Create the sub-container
     let subContentContainer = $("<div></div>");
     subContentContainer.attr("id", "childsessionFieldsContainer");
 
-    // Children Session Name
-    let ChildSession_Name = $("<input type=\"text\" class=\"form-control\" />");
-    ChildSession_Name.addClass("user-input-content");
-    ChildSession_Name.attr("id", "event_name");
-    let nameLabel = $("<label>议程</label>"); // Add label
-    if (data.Name == "")
-        ChildSession_Name.attr("placeholder", "请输入子环节名称");
-    else
-        ChildSession_Name.attr("value", data.Name);
-
-    let nameContainer = $("<div></div>");
-    nameContainer.append(nameLabel);
-    nameContainer.append(ChildSession_Name);
+    let nameContainer = createEventNameContainer(data);
     subContentContainer.append(nameContainer);
 
     // Children Session Duration
-    let durationLabel = $("<label>时长</label>"); // Add label
-    let ChildSession_Duration = $("<input type=\"text\" class=\"form-control\" />");
-    ChildSession_Duration.addClass("user-input-content");
-    ChildSession_Duration.attr("id", "duration");
-    if (data.Duration == "")
-        ChildSession_Duration.attr("placeholder", "请输入子环节时长");
-    else
-        ChildSession_Duration.attr("value", data.Duration);
-
-    let durationContainer = $("<div></div>");
-    durationContainer.append(durationLabel);
-    durationContainer.append(ChildSession_Duration);
+    let durationContainer = createDurationContainer(data);
     subContentContainer.append(durationContainer);
 
     // Children Session Role
-    let roleSelectLabel = $("<label>角色</label>"); // Add label
-    let ChildSession_Role = GetRoleSelect(data.Role);
-    ChildSession_Role.addClass("user-input-content");
-    ChildSession_Role.attr("id", "role");
-
-    let roleContainer = $("<div></div>");
-    roleContainer.append(roleSelectLabel);
-    roleContainer.append(ChildSession_Role);
+    let roleContainer = createRoleContainer(data);
     subContentContainer.append(roleContainer);
 
     return subContentContainer;
