@@ -4,7 +4,21 @@ var DownActionType = 2;
 
 function convertBackendScheduleDictListToFrontendDictList(scheduleEvents) {
     // scheduleEvents is like:
-    // '[{ "event_name": "会议开场", "child_events": [ { "event_name": "主持人开场白(介绍会议主要内容、及可能的议程改动)", "duration": 1, "role": "主持人", "comment": "sdfs" }, { "event_name": "介绍会议规则以及宾客介绍（限时每位30秒）", "duration": 2, "role": "礼宾师", "comment": "sdfs" } ] }]';
+    // '[{ "event_name": "会议开场",
+    //     "child_events": [ { "event_name": "主持人开场白(介绍会议主要内容、及可能的议程改动)", 
+    //                         "duration": 1,
+    //                         "role": "主持人", 
+    //                         "additional_fields": [{field_label: "xxx", 
+    //                                                field_name: "xxx", 
+    //                                                default_value: "xxx"} },
+    //                       { "event_name": "介绍会议规则以及宾客介绍（限时每位30秒）",
+    //                         "duration": 2,
+    //                         "role": "礼宾师",
+    //                         "additional_fields": [{field_label: "xxx", 
+    //                                                field_name: "xxx",
+    //                                                default_value: "xxx"} ] 
+    //                       }
+    //  ]';
     let convertedList = [];
     for (let i = 0; i < scheduleEvents.length; i++) {
         let convertedEvent = convertBackendScheduleDictToFrontendDict(scheduleEvents[i], i + 1);
@@ -28,11 +42,13 @@ function convertBackendScheduleDictToFrontendDict(scheduleEvent, index) {
         for (let i = 0; i < scheduleEvent.child_events.length; i++) {
             let childEvent = scheduleEvent.child_events[i];
             let childSession = {
-                ChildIndex: i + 1,
                 Name: childEvent.event_name,
                 Duration: childEvent.duration,
-                Role: childEvent.role
+                Role: childEvent.role,
             };
+            if("additional_fields" in childEvent) {
+                childSession["AdditionalField"] = childEvent.additional_fields;
+            }
             data.ChildSessions.push(childSession);
         }
     }

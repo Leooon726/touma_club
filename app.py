@@ -184,6 +184,10 @@ def export_pdf():
     output_pdf_file_path = _export_pdf()
     return send_file(output_pdf_file_path, as_attachment=False)
 
+@app.route('/get_child_session_default_data', methods=['GET'])
+def get_child_session_default_data():
+    data = AgendaGenerationAdaptor.get_child_session_default_data_by_template_name(session['selected_template'])
+    return data
 
 if __name__ == '__main__':
     app.run(debug=True)

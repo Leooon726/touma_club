@@ -38,14 +38,6 @@
   margin: 10px;
 }
 
-#childsessionFieldsContainer #duration {
-  width: 150px; /* Set your desired fixed width */
-}
-
-#childsessionFieldsContainer #role {
-  width: 150px; /* Set your desired fixed width */
-}
-
 #childsessionFieldsContainer .row-container {
   display: flex;
   align-items: center;

@@ -235,9 +235,7 @@ $(document).on('click', ".AddChildSession", function () {
         }
     }
 
-    // TODO: deprecate ChildIndex.
-    let NewChildSessionData = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
-    let NewChildSession = CreateOneChildSession(NewChildSessionData);
+    let NewChildSession = CreateOneChildSession();
     childSessionsTable.append(NewChildSession);
 })
 
@@ -264,8 +262,6 @@ $(document).on('click', '.SessionUp', function () {
     else {
         let previousSession = MeetingSessions.children().eq(CurrSessionIndex - 1);
         CurrSession.insertBefore(previousSession);
-
-        // SessionMove(index, 1)
     }
 
 
@@ -289,7 +285,6 @@ $(document).on('click', '.SessionDown', function () {
     else {
         let nextSession = MeetingSessions.children().eq(CurrSessionIndex + 1);
         CurrSession.insertAfter(nextSession);
-        // SessionMove(index, -1)
     }
 })
 

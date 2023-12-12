@@ -63,3 +63,18 @@ class AgendaGenerationAdaptor():
         meeting_info_and_role_dict = AgendaGenerationAdaptor._reorganize_to_meeting_info_and_role_dict(fields_dict)
         return meeting_info_and_role_dict
         
+    @staticmethod
+    def get_child_session_default_data_by_template_name(template_name):
+        # TODO: Config in config file.
+        if template_name == 'jabil_jouse_template_for_print':
+            return { "Name": "", "Duration": 0, "Role": ""}
+        elif template_name == 'huangpu_rise_template_for_print':
+            return { "Name": "", "Duration": 0, "Role": ""}
+        elif template_name == 'HR_elite_template':
+            return { "Name": "", "Duration": 0, "Role": ""}
+        elif template_name == 'general_template':
+            return { "Name": "", "Duration": 0, "Role": ""}
+        elif template_name == 'heyan_template':
+            return { "Name": "", "Duration": 0, "Role": "" ,"AdditionalField": [{"field_label": "备注", "field_name": "comment", "default_value": "某俱乐部"}]}
+        else:
+            return { "Name": "", "Duration": 0, "Role": ""}

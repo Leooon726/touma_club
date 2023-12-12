@@ -1,3 +1,10 @@
+// var DefaultChildSessionData = { Name: "", Duration: 0, Role: "" ,AdditionalField: [{field_label: "xxx", field_name: "xxx", default_value: "xxx"}]};
+var DefaultChildSessionData; // Define the variable
+
+// Use $.get() method to obtain the data
+$.get('./get_child_session_default_data', function(data) {
+  DefaultChildSessionData = data;
+});
 
 $(document).on('click', '.ChildSessionUp', function () {
     let ChildSessionsContainer = getChildSessionsContainerWithButton($(this));
@@ -17,17 +24,6 @@ $(document).on('click', '.ChildSessionUp', function () {
         moveChildSessioinRowUp(ChildSessionsContainer, CurChildSession)
     }
 })
-
-function getChildSessionRowIndex(clickedButton, tbodyDom) {
-    // Find the parent row of the clicked button
-    var row = $(clickedButton).closest('tr');
-
-    // Get the index of the row within the table body
-    var rowIndex = $(tbodyDom).children('tr').index(row);
-
-    // Return the row index
-    return rowIndex;
-}
 
 function moveChildSessioinRowUp(ChildSessionsContainer, CurChildSession) {
     let previousSibling = CurChildSession.prev();
@@ -139,21 +135,22 @@ function GetRoleSelect(SelectedRole) {
 }
 
 function CreateFieldContainerInChildSession(data) {
-    function createDurationContainer(data) {
-        // Children Session Duration
-        let durationLabel = $("<label>时长</label>"); // Add label
-        let ChildSession_Duration = $("<input type=\"text\" class=\"form-control\" />");
-        ChildSession_Duration.addClass("user-input-content");
-        ChildSession_Duration.attr("id", "duration");
-        if (data.Duration == "")
-            ChildSession_Duration.attr("placeholder", "请输入子环节时长");
+    // data: { Name: "xxxx", Duration: 0, Role: "xx", AdditionalField: [{field_label: "xxx", field_name: "xxx", default_value: "xxx"},] }
+    function createInputFieldContainer(label_string, field_name_string, default_value="") {
+        let fieldLabel = $("<label></label>").text(label_string);
+        fieldLabel.addClass("user-input-content-label");
+        let inputBox = $("<input type=\"text\" class=\"form-control\" />");
+        inputBox.addClass("user-input-content");
+        inputBox.attr("id", field_name_string);
+        if (default_value === "")
+            inputBox.attr("placeholder", "请输入"+label_string);
         else
-            ChildSession_Duration.attr("value", data.Duration);
+            inputBox.attr("value", default_value);
 
-        let durationContainer = $("<div class=\"row-container\"></div>"); // Add the row-container class
-        durationContainer.append(durationLabel);
-        durationContainer.append(ChildSession_Duration);
-        return durationContainer;
+        let fieldContainer = $("<div class=\"row-container\"></div>"); // Add the row-container class
+        fieldContainer.append(fieldLabel);
+        fieldContainer.append(inputBox);
+        return fieldContainer;
     }
     function createEventNameContainer(data) {
         // Children Session Name
@@ -174,6 +171,7 @@ function CreateFieldContainerInChildSession(data) {
     
     function createRoleContainer(data) {
         let roleSelectLabel = $("<label>角色</label>"); // Add label
+        roleSelectLabel.addClass("user-input-content-label");
         let ChildSession_Role = GetRoleSelect(data.Role);
         ChildSession_Role.addClass("user-input-content");
         ChildSession_Role.attr("id", "role");
@@ -192,19 +190,28 @@ function CreateFieldContainerInChildSession(data) {
     subContentContainer.append(nameContainer);
 
     // Children Session Duration
-    let durationContainer = createDurationContainer(data);
+    let durationContainer = createInputFieldContainer("时长", "duration", data.Duration);
     subContentContainer.append(durationContainer);
 
     // Children Session Role
     let roleContainer = createRoleContainer(data);
     subContentContainer.append(roleContainer);
 
+    // Additional fields.
+    $.each(data.AdditionalField, function(index, field) {
+        var fieldLabel = field.field_label;
+        var fieldName = field.field_name;
+        var defaultValue = field.default_value;
+
+        let fieldContainer = createInputFieldContainer(fieldLabel, fieldName, defaultValue);
+        subContentContainer.append(fieldContainer);
+      });
     return subContentContainer;
 }
 
 function CreateOneChildSession(data) {
     if (jQuery.isEmptyObject(data)) {
-        data = { ChildIndex: 0, Name: "", Duration: 0, Role: "" };
+        data = DefaultChildSessionData;
     }
 
     let FieldContainer = CreateFieldContainerInChildSession(data);
