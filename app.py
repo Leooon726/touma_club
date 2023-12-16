@@ -49,7 +49,13 @@ def input_agenda_content():
     output_directory = _get_or_create_output_file_directory()
     logger.debug(f"output_directory: {output_directory}")
     fields_dict = AgendaGenerationAdaptor.get_meeting_info_fields_dict(selected_template,output_directory)
-    return render_template('InputAgendaContent.html',data=fields_dict)
+    return render_template('InputAgendaContent.html',template_fields_dict=fields_dict)
+
+@app.route('/GetUserInputExample')
+def get_user_input_example():
+    selected_template = session.get('selected_template')
+    user_input_example_json = AgendaGenerationAdaptor.get_user_input_example_json(selected_template)
+    return jsonify({'user_input_example': user_input_example_json})
 
 @app.route('/set_selected_template', methods=['POST'])
 def record_template():

@@ -1,4 +1,4 @@
-// var DefaultChildSessionData = { Name: "", Duration: 0, Role: "" ,AdditionalField: [{field_label: "xxx", field_name: "xxx", default_value: "xxx"}]};
+// var DefaultChildSessionData = { name: "", duration: 0, role: "" , buffer: "1", comment: "某俱乐部"};
 var DefaultChildSessionData; // Define the variable
 
 // Use $.get() method to obtain the data
@@ -135,7 +135,19 @@ function GetRoleSelect(SelectedRole) {
 }
 
 function CreateFieldContainerInChildSession(data) {
-    // data: { Name: "xxxx", Duration: 0, Role: "xx", AdditionalField: [{field_label: "xxx", field_name: "xxx", default_value: "xxx"},] }
+    function FieldKeyToLabel(key_name) {
+        if (key_name == "duration") {
+            return "时长";
+        } else if (key_name == "comment") {
+            return "备注";
+        } else if (key_name == "duration_buffer") {
+            return "串词时长";
+        } else {
+            return "未知字段";
+        }
+    }
+
+    // data: { name: "xxxx", duration: 0, role: "xx", buffer: "1", comment: "某俱乐部"}
     function createInputFieldContainer(label_string, field_name_string, default_value="") {
         let fieldLabel = $("<label></label>").text(label_string);
         fieldLabel.addClass("user-input-content-label");
@@ -158,10 +170,10 @@ function CreateFieldContainerInChildSession(data) {
         ChildSession_Name.addClass("user-input-content");
         ChildSession_Name.attr("id", "event_name");
         // let nameLabel = $("<label>议程</label>"); // Add label
-        if (data.Name == "")
+        if (data.event_name == "")
             ChildSession_Name.attr("placeholder", "请输入子环节名称");
         else
-            ChildSession_Name.attr("value", data.Name);
+            ChildSession_Name.attr("value", data.event_name);
 
         let nameContainer = $("<div class=\"row-container\"></div>");
         // nameContainer.append(nameLabel);
@@ -172,7 +184,7 @@ function CreateFieldContainerInChildSession(data) {
     function createRoleContainer(data) {
         let roleSelectLabel = $("<label>角色</label>"); // Add label
         roleSelectLabel.addClass("user-input-content-label");
-        let ChildSession_Role = GetRoleSelect(data.Role);
+        let ChildSession_Role = GetRoleSelect(data.role);
         ChildSession_Role.addClass("user-input-content");
         ChildSession_Role.attr("id", "role");
     
@@ -188,23 +200,16 @@ function CreateFieldContainerInChildSession(data) {
 
     let nameContainer = createEventNameContainer(data);
     subContentContainer.append(nameContainer);
-
-    // Children Session Duration
-    let durationContainer = createInputFieldContainer("时长", "duration", data.Duration);
-    subContentContainer.append(durationContainer);
-
-    // Children Session Role
-    let roleContainer = createRoleContainer(data);
-    subContentContainer.append(roleContainer);
-
-    // Additional fields.
-    $.each(data.AdditionalField, function(index, field) {
-        var fieldLabel = field.field_label;
-        var fieldName = field.field_name;
-        var defaultValue = field.default_value;
-
-        let fieldContainer = createInputFieldContainer(fieldLabel, fieldName, defaultValue);
-        subContentContainer.append(fieldContainer);
+    $.each(data, function(key, value) {
+        if(key=="event_name"){
+            // Skip event_name value.
+        }else if(key=="role"){
+            let roleContainer = createRoleContainer(data);
+            subContentContainer.append(roleContainer);
+        }else{
+            let InputFieldContainer = createInputFieldContainer(FieldKeyToLabel(key), key, value);
+            subContentContainer.append(InputFieldContainer);
+        }
       });
     return subContentContainer;
 }

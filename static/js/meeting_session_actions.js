@@ -1,9 +1,3 @@
-let updatedRoleNameTextBoxContent = $("#role_name_list").val();
-
-$("#role_name_list").on("input", function () {
-    updatedRoleNameTextBoxContent = $(this).val();
-});
-
 function CreateDurationInputBox(data={}) {
     let container = $("<div></div>"); // Create a container to hold the label and input box
     container.addClass("input-parent-session-duration-container"); // Add a CSS class to style the container
@@ -131,7 +125,7 @@ function GetButtonDom(color, name, classNameForClick) {
 }
 
 function updateRoleSelect(selectElement, selectedRole) {
-    let RoleData = updatedRoleNameTextBoxContent;
+    let RoleData = $("#role_name_list").val();
 
     // Clear existing options
     selectElement.empty();

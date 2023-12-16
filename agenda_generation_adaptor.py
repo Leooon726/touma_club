@@ -28,6 +28,13 @@ class AgendaGenerationAdaptor():
         return os.path.join(_TEMPLATE_ZOO_PATH,template_name,'engine_config.yaml')
 
     @staticmethod
+    def get_user_input_example_json(template_name):
+        example_json_file_path = os.path.join(_TEMPLATE_ZOO_PATH,template_name,'user_input_example.json')
+        with open(example_json_file_path, 'r') as file:
+            user_input_example_json = json.load(file)
+        return user_input_example_json
+
+    @staticmethod
     def _reorganize_to_meeting_info_and_role_dict(fields_dict):
         meeting_info_and_role_dict = {'meeting_info':[],'role_name_list':[]}
         for field_and_example_dict in fields_dict:
@@ -36,6 +43,11 @@ class AgendaGenerationAdaptor():
             is_single_line = field_and_example_dict['is_single_line'] if ('is_single_line' in field_and_example_dict) else True
             if not AgendaGenerationAdaptor._is_role_field(field):
                 meeting_info_and_role_dict['meeting_info'].append({'field_name':field,'content':example,'is_single_line':is_single_line})
+
+        # If there is not '开始时间' as field_name, add one.
+        has_start_time = any(field_info['field_name'] == '开始时间' for field_info in meeting_info_and_role_dict['meeting_info'])
+        if not has_start_time:
+            meeting_info_and_role_dict['meeting_info'].append({'field_name': '开始时间', 'content': '10:00', 'is_single_line': True})
 
         for default_role_field in AgendaGenerationAdaptor._DEFAULT_ROLE_FIELDS:
             field = default_role_field
@@ -67,14 +79,14 @@ class AgendaGenerationAdaptor():
     def get_child_session_default_data_by_template_name(template_name):
         # TODO: Config in config file.
         if template_name == 'jabil_jouse_template_for_print':
-            return { "Name": "", "Duration": 0, "Role": ""}
+            return { "event_name": "", "duration": 0, "role": ""}
         elif template_name == 'huangpu_rise_template_for_print':
-            return { "Name": "", "Duration": 0, "Role": ""}
+            return { "event_name": "", "duration": 0, "role": ""}
         elif template_name == 'HR_elite_template':
-            return { "Name": "", "Duration": 0, "Role": ""}
+            return { "event_name": "", "duration": 0, "role": ""}
         elif template_name == 'general_template':
-            return { "Name": "", "Duration": 0, "Role": ""}
+            return { "event_name": "", "duration": 0, "role": ""}
         elif template_name == 'heyan_template':
-            return { "Name": "", "Duration": 0, "Role": "" ,"AdditionalField": [{"field_label": "备注", "field_name": "comment", "default_value": "某俱乐部"}]}
+            return { "event_name": "", "duration": 0, "role": "" , "duration_buffer": 1, "comment": "某俱乐部"}
         else:
-            return { "Name": "", "Duration": 0, "Role": ""}
+            return { "event_name": "", "duration": 0, "role": ""}

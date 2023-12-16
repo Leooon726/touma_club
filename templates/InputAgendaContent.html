@@ -57,8 +57,7 @@
             <div class="col-12">
                 <form>
                     <div class="form-group" , id="meetingInfo">
-                        <!-- <label for="meeting_info">会议信息</label> -->
-                        {% for item in data['meeting_info'] %}
+                        {% for item in template_fields_dict['meeting_info'] %}
                         <div class="input-group">
                             <p class="field-label field-label-centered">{{ item['field_name'] }}</p>
                             {% if item['is_single_line'] %}
@@ -68,7 +67,7 @@
                             {% else %}
                             <textarea id="{{ item['field_name'] }}" class="form-control input-centered"
                                 name="{{ item['field_name'] }}"
-                                placeholder="{{ item['field_name'] }}">{{ item['content'] }}</textarea>
+                                placeholder="{{ item['field_name'] }}" rows="5">{{ item['content'] }}</textarea>
                             {% endif %}
                         </div>
                         {% endfor %}
@@ -77,7 +76,7 @@
                     <div class="form-group">
                         <label for="role_name_list">会议角色及人员</label>
                         <textarea id="role_name_list" class="form-control" name="role_name_list" rows="8"
-                            placeholder="请输入会议角色及对应人名">{% for item in data['role_name_list'] %}
+                            placeholder="请输入会议角色及对应人名">{% for item in template_fields_dict['role_name_list'] %}
     {{ item['role'] }}: {{ item['name'] }}{% if not loop.last %} {% endif %}{% endfor %}</textarea>
                     </div>
 

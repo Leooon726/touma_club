@@ -29,7 +29,6 @@ function convertBackendScheduleDictListToFrontendDictList(scheduleEvents) {
 
 function convertBackendScheduleDictToFrontendDict(scheduleEvent, index) {
     let data = {
-        Index: index,
         Title: scheduleEvent.event_name,
         ChildSessions: []
     };
@@ -41,31 +40,47 @@ function convertBackendScheduleDictToFrontendDict(scheduleEvent, index) {
     if (scheduleEvent.child_events && Array.isArray(scheduleEvent.child_events)) {
         for (let i = 0; i < scheduleEvent.child_events.length; i++) {
             let childEvent = scheduleEvent.child_events[i];
-            let childSession = {
-                Name: childEvent.event_name,
-                Duration: childEvent.duration,
-                Role: childEvent.role,
-            };
-            if("additional_fields" in childEvent) {
-                childSession["AdditionalField"] = childEvent.additional_fields;
-            }
-            data.ChildSessions.push(childSession);
+            data.ChildSessions.push(childEvent);
         }
     }
     return data;
 }
 
-$(document).ready(function () {
-    $.getJSON("static/user_input.json", function (json_data) {
-        data = convertBackendScheduleDictListToFrontendDictList(json_data.schedule_events);
-        // console.log(data);
-        for (let i = 0; i < data.length; i++) {
-            CreateSessionElement(data[i]);
+function fillRoleNameList(roleNameListText) {
+    var roleListTextArea = $('#role_name_list');
+    roleListTextArea.val(roleNameListText);
+}
+
+function fillMeetingInfo(meetingInfo) {
+    $.each(meetingInfo, function(index, item) {
+        var fieldId = '#' + item.field_name;
+
+        if ($(fieldId).is('input[type="text"]')) {
+            // If it's a text input, set the value
+            $(fieldId).val(item.content);
+        } else if ($(fieldId).is('textarea')) {
+            // If it's a textarea, set the content
+            $(fieldId).val(item.content);
         }
-    })
-        .fail(function (jqxhr, textStatus, error) {
-            console.error("Error fetching JSON file:", error);
-        });
+    });
+}
+
+$(document).ready(function () {
+    $.ajax({
+        url: './GetUserInputExample',
+        type: 'GET',
+        success: function (response) {
+            fillMeetingInfo(response.user_input_example.meeting_info);
+            fillRoleNameList(response.user_input_example.role_name_list);
+            data = convertBackendScheduleDictListToFrontendDictList(response.user_input_example.agenda_content);
+            for (let i = 0; i < data.length; i++) {
+                CreateSessionElement(data[i]);
+            }
+        },
+        error: function (error) {
+            console.error('Error:', error);
+        }
+    });
 
     // Event listener for the submit button click
     $('#submitButton').click(function () {
@@ -144,7 +159,7 @@ $(document).ready(function () {
 document.getElementById("downloadExcel").addEventListener("click", function () {
     if (HasSubmittedMessage == false) {
         $('#Submitted_Content').empty();
-        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先要生成议程表</div>');
+        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先生成议程表</div>');
         $('#staticBackdrop').modal('show');
 
         window.setTimeout(function () {
