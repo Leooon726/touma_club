@@ -65,6 +65,77 @@ function fillMeetingInfo(meetingInfo) {
     });
 }
 
+function GetMeetingInfoAsDictList(){
+    var meetingInfo = [];
+    $('#meetingInfo .input-group input[type="text"], #meetingInfo .input-group textarea').each(function () {
+        var fieldName = $(this).attr('name');
+        var content = $(this).val();
+        // Create a dictionary with 'field_name' and 'content' keys and their respective values
+        var info = {
+            'field_name': fieldName,
+            'content': content
+        };
+        // Append the dictionary to the meetingInfo list
+        meetingInfo.push(info);
+    });
+    return meetingInfo;
+}
+
+function IsAllInputsValid(){
+    function GetUnfilledFieldsInMeetingInfo() {
+        var unfilledFields = [];
+        // Iterate through each input and textarea within the form-group
+        $('#meetingInfo input[type="text"], #meetingInfo textarea').each(function () {
+            if ($(this).val().trim() === '') {
+                unfilledFields.push($(this).attr('placeholder') || $(this).attr('id'));
+            }
+        });
+        return unfilledFields;
+    }
+
+    // function GetUnfilledFieldsInMeetingSession() {
+
+    // }
+
+    var unfilledFieldsInMeetingInfo = GetUnfilledFieldsInMeetingInfo();
+    if (unfilledFieldsInMeetingInfo.length > 0) {
+        var errorMessage = "以下字段没有填写: " + unfilledFieldsInMeetingInfo.join(', ');
+        showFailureMessage(errorMessage);
+        return false;
+    }
+
+    // var unfilledFieldsInMeetingSession = GetUnfilledFieldsInMeetingSession();
+    // TODO: Check parent session and child session.
+    // parent session should not empty, duration should be number.
+    return true;
+}
+
+function showSuccessMessage(message) {
+    // Pop a message to notify the user.
+    $('#Submitted_Content').empty();
+    $('#Submitted_Content').append('<div class="alert alert-success" role="alert">' + message + '</div>');
+    $('#staticBackdrop').modal('show');
+
+    // Close modal automatically
+    window.setTimeout(function () {
+        $("#staticBackdropClose").trigger("click");
+        $("#staticBackdrop").modal('hide');
+    }, 1500);
+}
+
+function showFailureMessage(message) {
+    // Pop a message to notify the user.
+    $('#Submitted_Content').empty();
+    $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">' + message + '</div>');
+    $('#staticBackdrop').modal('show');
+
+    // Close modal automatically
+    window.setTimeout(function () {
+        $("#staticBackdropClose").trigger("click");
+        $("#staticBackdrop").modal('hide');
+    }, 1500);
+}
+
 $(document).ready(function () {
     $.ajax({
         url: './GetUserInputExample',
@@ -84,28 +155,18 @@ $(document).ready(function () {
 
     // Event listener for the submit button click
     $('#submitButton').click(function () {
+        // Check the validness of all the input content.
+        if(!IsAllInputsValid()){
+            return;
+        }
+
         MaskUtil.mask();
 
-        var meetingInfo = []; // Initialize meetingInfo as an empty list
-        $('#meetingInfo .input-group input[type="text"], #meetingInfo .input-group textarea').each(function () {
-            var fieldName = $(this).attr('name');
-            var content = $(this).val();
-            // Create a dictionary with 'field_name' and 'content' keys and their respective values
-            var info = {
-                'field_name': fieldName,
-                'content': content
-            };
-            // Append the dictionary to the meetingInfo list
-            meetingInfo.push(info);
-        });
-        // console.log(meetingInfo);
-
         // Create an object to store the form data
-        // TODO(Changhong): send json as agenda_content.
         var formData = {
-            meeting_info: meetingInfo,
+            meeting_info: GetMeetingInfoAsDictList(),
             role_name_list: $('#role_name_list').val(),
-            agenda_content: GetAgendaContentAsDictList() // $('#agenda_content').val()
+            agenda_content: GetAgendaContentAsDictList() 
         };
 
         // Send the form data as JSON via a POST request
@@ -121,34 +182,16 @@ $(document).ready(function () {
 
                 //Shutdown shade
                 MaskUtil.unmask();
-
-                // Pop a message to notify the user.
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-success" role="alert"> 议程表生成成功 </div>');
-                $('#staticBackdrop').modal('show');
-
-                // Close modal automatically
-                window.setTimeout(function () {
-                    $("#staticBackdropClose").trigger("click");
-                    $("#staticBackdrop").modal('hide');
-                }, 1500);
+                showSuccessMessage('议程表生成成功');
 
                 HasSubmittedMessage = true;
             },
             error: function (error) {
                 // Handle any errors that occur during the request
                 console.error('Error:', error);
-                // Display an error message to the user
-                // $('#message').html('<p>Error occurred: ' + error.statusText + '</p>');
 
                 MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert"> ' + error.statusText + ' </div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function () {
-                    $("#staticBackdrop").modal('hide');
-                }, 1500);
+                showFailureMessage(error.statusText);
             }
         });
 
@@ -188,14 +231,7 @@ document.getElementById("downloadExcel").addEventListener("click", function () {
                     window.URL.revokeObjectURL(url);
 
                     MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载Excel版议程表成功</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function () {
-                        // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    }, 1500);
+                    showSuccessMessage("下载Excel版议程表成功");
                 });
             }
             else {
@@ -259,14 +295,7 @@ document.getElementById("downloadPdf").addEventListener("click", function () {
                     window.URL.revokeObjectURL(url);
 
                     MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载PDF版议程表成功</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function () {
-                        // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    }, 1500);
+                    showSuccessMessage("下载PDF版议程表成功");
                 });
             } else {
                 console.error("Failed to download PDF");
@@ -324,14 +353,8 @@ document.getElementById("previewPdf").addEventListener("click", function () {
                     window.open(url, '_blank');
 
                     MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览PDF版议程表成功</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function () {
-                        // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    }, 1500);
+                    showSuccessMessage();
+                    $('#Submitted_Content').empty("预览PDF版议程表成功");
                 });
             } else {
                 console.error("Failed to retrieve PDF");
@@ -393,13 +416,8 @@ document.getElementById("downloadImage").addEventListener("click", function () {
                     window.URL.revokeObjectURL(url);
 
                     MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-success" role="alert">下载图片议程表成功</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function () {
-                        $("#staticBackdrop").modal('hide');
-                    }, 1500);
+                    showSuccessMessage();
+                    $('#Submitted_Content').empty("下载图片议程表成功");
                 });
             } else {
                 console.error("Failed to download image");
@@ -455,14 +473,8 @@ document.getElementById("previewImage").addEventListener("click", function () {
                     window.open(url, '_blank');
 
                     MaskUtil.unmask();
-                    $('#Submitted_Content').empty();
-                    $('#Submitted_Content').append('<div class="alert alert-success" role="alert">预览图片议程表成功</div>');
-                    $('#staticBackdrop').modal('show');
-
-                    window.setTimeout(function () {
-                        // $("#staticBackdropClose").trigger("click");
-                        $("#staticBackdrop").modal('hide');
-                    }, 1500);
+                    showSuccessMessage();
+                    $('#Submitted_Content').empty("预览图片议程表成功");
                 });
             } else {
                 console.error("Failed to preview image");
