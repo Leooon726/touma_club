@@ -26,17 +26,9 @@ function CreateDurationInputBox(data={}) {
 }
 
 function CreateSessionElement(data) {
-    let NewSessionID = "Session_";  //Get Session ID
     if (jQuery.isEmptyObject(data)) {
-        //Get New Session Index
-        let MeetingSessions_Count = $("#MeetingSession").children().length; //Get Current Sessions Length
-        let NewSessionIndex = MeetingSessions_Count + 1;
-        NewSessionID += NewSessionIndex;
-
-        data = { Index: NewSessionIndex, Title: "", ChildSessions: [] };
+        data = {Title: "", ChildSessions: [] };
     }
-    else
-        NewSessionID += data.Index;
 
     let foldButton = $("<button />");
     foldButton.addClass("fold-button");
@@ -61,33 +53,32 @@ function CreateSessionElement(data) {
     DivRow_InputGroup.addClass("input-group mb-3");
     foldButton.appendTo(DivRow_InputGroup);
     Input_SessionName.appendTo(DivRow_InputGroup);
-    // Input_SessionDuration.appendTo(DivRow_InputGroup);
     Button_ChildSession_Add.appendTo(DivRow_InputGroup);
     Button_Session_Up.appendTo(DivRow_InputGroup);
     Button_Session_Down.appendTo(DivRow_InputGroup);
     Button_Session_Del.appendTo(DivRow_InputGroup);
 
-    let ChildSessionsTable;
+    let childSessionsObject;
     if (data.ChildSessions && data.ChildSessions.length > 0) {
-        ChildSessionsTable = createChildSessionsAsTable(data)
+        childSessionsObject = createChildSessionsObject(data)
     } else {
-        ChildSessionsTable = CreateDurationInputBox(data);
+        childSessionsObject = CreateDurationInputBox(data);
     }
-    ChildSessionsTable.hide(); // Hide the ChildSessionsTable by default
+    childSessionsObject.hide(); // Hide the childSessionsObject by default
 
     // Add click event handler to the foldButton
     foldButton.on("click", function (event) {
         event.preventDefault(); // Prevent the default form submission behavior
         foldButtonParent = foldButton.parent().parent()
-        let targetObjectToBeFolded = foldButtonParent.find("#childSessionDurationInputBox, #childSessionsTable");
+        let targetObjectToBeFolded = foldButtonParent.find("#childSessionDurationInputBox, #childSessionsObject");
 
-        targetObjectToBeFolded.toggle(); // Toggle the visibility of the ChildSessionsTable
+        targetObjectToBeFolded.toggle(); // Toggle the visibility of the childSessionsObject
 
-        // Update the foldButton text based on the visibility of ChildSessionsTable
+        // Update the foldButton text based on the visibility of childSessionsObject
         if (targetObjectToBeFolded.is(":visible")) {
-            foldButton.text("v"); // Change the button text to "v" when ChildSessionsTable is visible
+            foldButton.text("v"); // Change the button text to "v" when childSessionsObject is visible
         } else {
-            foldButton.text(">"); // Change the button text back to ">" when ChildSessionsTable is hidden
+            foldButton.text(">"); // Change the button text back to ">" when childSessionsObject is hidden
         }
     });
 
@@ -95,7 +86,7 @@ function CreateSessionElement(data) {
     let DivContainer = GetDivDom();
     DivContainer.addClass("parent-and-children-session"); //container-fluid
     DivRow_InputGroup.appendTo(DivContainer);
-    ChildSessionsTable.appendTo(DivContainer);
+    childSessionsObject.appendTo(DivContainer);
 
     let DivFormItem = $("#MeetingSession");
     DivContainer.appendTo(DivFormItem);
@@ -167,8 +158,8 @@ function GetAgendaContentAsDictList() {
     function ParseChildSessions(parentSession) {
         let childSessionList = [];
         // Every child session has event_name, duration and role.
-        let childSessionsTable = $(parentSession).find("#childSessionsTable");
-        childSessionsTable.children(".child-session").each(function (index, sessionRow) {
+        let childSessionsObject = $(parentSession).find("#childSessionsObject");
+        childSessionsObject.children(".child-session").each(function (index, sessionRow) {
             let session_dict = ParseChildSession(sessionRow);
             childSessionList.push(session_dict);
         });
@@ -217,12 +208,12 @@ function GetAgendaContent() {
 
 $(document).on('click', ".AddChildSession", function () {
     let CurrSession = getCurrentSessionFromOperationButton($(this));
-    let childSessionsTable = $(CurrSession).find("#childSessionsTable");
+    let childSessionsObject = $(CurrSession).find("#childSessionsObject");
     
-    // If cannot find #childSessionsTable, create one by calling createChildSessionsAsTable.
-    if (childSessionsTable.length === 0) {
-        childSessionsTable = createChildSessionsAsTable();
-        $(CurrSession).append(childSessionsTable);
+    // If cannot find #childSessionsObject, create one by calling createChildSessionsObject.
+    if (childSessionsObject.length === 0) {
+        childSessionsObject = createChildSessionsObject();
+        $(CurrSession).append(childSessionsObject);
         let inputDurationContainer = $(CurrSession).find(".input-parent-session-duration-container");
         if (inputDurationContainer.length > 0) {
             inputDurationContainer.remove();
@@ -230,7 +221,7 @@ $(document).on('click', ".AddChildSession", function () {
     }
 
     let NewChildSession = CreateOneChildSession();
-    childSessionsTable.append(NewChildSession);
+    childSessionsObject.append(NewChildSession);
 })
 
 function getCurrentSessionFromOperationButton(button) {

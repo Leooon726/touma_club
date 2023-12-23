@@ -52,7 +52,7 @@ function fillRoleNameList(roleNameListText) {
 }
 
 function fillMeetingInfo(meetingInfo) {
-    $.each(meetingInfo, function(index, item) {
+    $.each(meetingInfo, function (index, item) {
         var fieldId = '#' + item.field_name;
 
         if ($(fieldId).is('input[type="text"]')) {
@@ -65,7 +65,7 @@ function fillMeetingInfo(meetingInfo) {
     });
 }
 
-function GetMeetingInfoAsDictList(){
+function GetMeetingInfoAsDictList() {
     var meetingInfo = [];
     $('#meetingInfo .input-group input[type="text"], #meetingInfo .input-group textarea').each(function () {
         var fieldName = $(this).attr('name');
@@ -81,7 +81,7 @@ function GetMeetingInfoAsDictList(){
     return meetingInfo;
 }
 
-function IsAllInputsValid(){
+function IsAllInputsValid() {
     function GetUnfilledFieldsInMeetingInfo() {
         var unfilledFields = [];
         // Iterate through each input and textarea within the form-group
@@ -93,20 +93,131 @@ function IsAllInputsValid(){
         return unfilledFields;
     }
 
-    // function GetUnfilledFieldsInMeetingSession() {
+    function GetUnfilledFieldsInMeetingParentSessions() {
+        var unfilledFieldIndices = [];
+        $('.parent-and-children-session input#parentSessionName').each(function (index) {
+            var value = $(this).val().trim();
+            if (value === '') {
+                var parentSessionIndex = index + 1; // Adjust index to start with 1
+                unfilledFieldIndices.push(parentSessionIndex);
+            }
+        });
+        return unfilledFieldIndices;
+    }
 
-    // }
+    function getFirstParentSessionWithUnfilledChildSessionNames() {
+        let parentAndChildrenContainers = $("#MeetingSession").find(".parent-and-children-session");
+        let unfilledChildInfo = [];
 
-    var unfilledFieldsInMeetingInfo = GetUnfilledFieldsInMeetingInfo();
+        // Iterate through each parent session
+        parentAndChildrenContainers.each(function (index) {
+            let parentSession = $(this);
+            let unfilledChildIndices = [];
+            // Check if the parent session has elements with the ID "childSessionsObject"
+            let childSessionsObject = parentSession.find("#childSessionsObject");
+            if (childSessionsObject.length === 0) {
+                return true;
+            }
+            childSessionsObject.children().each(function (childIndex) {
+                // Access each child session as $(this)
+                let childSession = $(this);
+
+                // Check if the child session name is unfilled
+                if (!childSession.find("#event_name").val() || childSession.find("#event_name").val().trim() === "") {
+                    unfilledChildIndices.push(childIndex + 1);
+                }
+            });
+            // Check if there are unfilled child sessions in the current parent session
+            if (unfilledChildIndices.length > 0) {
+                // Add information to the result
+                unfilledChildInfo.push({
+                    parentSessionName: parentSession.find("#parentSessionName").val(),
+                    unfilledChildIndices: unfilledChildIndices
+                });
+                return false;
+            }
+        });
+        return unfilledChildInfo;
+    }
+
+    function GetUnfilledFieldsInAChildSession(childSession) {
+        var unfilledFields = [];
+
+        // Find all input boxes and drop-downs within the child session
+        childSession.find('input[type="text"], select').each(function () {
+            var value = $(this).val().trim();
+            var label = $(this).closest('.row-container').find('.user-input-content-label').text().trim();
+
+            // Check if the value is empty or not selected for drop-downs
+            if (value === '' || ($(this).is('select') && value === '')) {
+                unfilledFields.push(label);
+            }
+        });
+        return unfilledFields;
+    }
+
+    function getFirstUnfilledChildSessionFields() {
+        let parentAndChildrenContainers = $("#MeetingSession").find(".parent-and-children-session");
+        let unfilledChildInfo = [];
+
+        // Iterate through each parent session
+        parentAndChildrenContainers.each(function (index) {
+            let parentSession = $(this);
+            let parentSessionName = parentSession.find("#parentSessionName").val();
+            // Check if the parent session has elements with the ID "childSessionsObject"
+            let childSessionsObject = parentSession.find("#childSessionsObject");
+            if (childSessionsObject.length === 0) {
+                return true;
+            }
+            childSessionsObject.children().each(function (childIndex) {
+                // Access each child session as $(this)
+                let childSession = $(this);
+                let childSessionEventName = childSession.find("#event_name").val().trim();
+                let unfilledFields = GetUnfilledFieldsInAChildSession(childSession);
+                // Check if there are unfilled fields in the current child session.
+                if (unfilledFields.length > 0) {
+                    // Add information to the result
+                    unfilledChildInfo.push({
+                        parentSessionName: parentSessionName,
+                        childSessionName: childSessionEventName,
+                        unfilledfieldName: unfilledFields
+                    });
+                    return false;
+                }
+            });
+        });
+        return unfilledChildInfo;
+    }
+
+    let unfilledFieldsInMeetingInfo = GetUnfilledFieldsInMeetingInfo();
     if (unfilledFieldsInMeetingInfo.length > 0) {
-        var errorMessage = "以下字段没有填写: " + unfilledFieldsInMeetingInfo.join(', ');
-        showFailureMessage(errorMessage);
+        let errorMessage = "以下字段没有填写: " + unfilledFieldsInMeetingInfo.join(', ');
+        showFailureMessage(errorMessage, "缺少信息");
         return false;
     }
 
-    // var unfilledFieldsInMeetingSession = GetUnfilledFieldsInMeetingSession();
-    // TODO: Check parent session and child session.
-    // parent session should not empty, duration should be number.
+    let unfilledFieldParentSessionIndices = GetUnfilledFieldsInMeetingParentSessions();
+    if (unfilledFieldParentSessionIndices.length > 0) {
+        let errorMessage = "第" + unfilledFieldParentSessionIndices.join(', ') + "个议程表环节名称未填写";
+        showFailureMessage(errorMessage, "缺少信息");
+        return false;
+    }
+
+    let unfilledChildSessionNamesInfoList = getFirstParentSessionWithUnfilledChildSessionNames();
+    if (unfilledChildSessionNamesInfoList.length > 0) {
+        let unfilledChildSessionNamesInfo = unfilledChildSessionNamesInfoList[0];
+        let errorMessage = "环节 \"" + unfilledChildSessionNamesInfo.parentSessionName + "\" 的第" + unfilledChildSessionNamesInfo.unfilledChildIndices.join(', ') + "个议程名称没有填写";
+        showFailureMessage(errorMessage, "缺少信息");
+        return false;
+    }
+
+    let unfilledChildSessionFieldsInfoList = getFirstUnfilledChildSessionFields();
+    if (unfilledChildSessionFieldsInfoList.length > 0) {
+        let unfilledChildSessionFieldsInfo = unfilledChildSessionFieldsInfoList[0];
+        let errorMessage = `环节 <strong>${unfilledChildSessionFieldsInfo.parentSessionName}</strong> 中的<br>议程 <strong>${unfilledChildSessionFieldsInfo.childSessionName}</strong><br>未填写: <strong>${unfilledChildSessionFieldsInfo.unfilledfieldName.join(', ')}</strong>`;
+        showFailureMessage(errorMessage, "缺少信息");
+        return false;
+    }
     return true;
 }
 
@@ -123,17 +234,15 @@ function showSuccessMessage(message) {
     }, 1500);
 }
 
-function showFailureMessage(message) {
+function showFailureMessage(message, title="") {
     // Pop a message to notify the user.
     $('#Submitted_Content').empty();
     $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">' + message + '</div>');
+    $('#staticBackdropLabel').text(title);
     $('#staticBackdrop').modal('show');
 
-    // Close modal automatically
-    window.setTimeout(function () {
-        $("#staticBackdropClose").trigger("click");
-        $("#staticBackdrop").modal('hide');
-    }, 1500);
+    $("#staticBackdropClose").trigger("click");
+    $("#staticBackdrop").modal('hide');
 }
 
 $(document).ready(function () {
@@ -156,7 +265,7 @@ $(document).ready(function () {
     // Event listener for the submit button click
     $('#submitButton').click(function () {
         // Check the validness of all the input content.
-        if(!IsAllInputsValid()){
+        if (!IsAllInputsValid()) {
             return;
         }
 
@@ -166,7 +275,7 @@ $(document).ready(function () {
         var formData = {
             meeting_info: GetMeetingInfoAsDictList(),
             role_name_list: $('#role_name_list').val(),
-            agenda_content: GetAgendaContentAsDictList() 
+            agenda_content: GetAgendaContentAsDictList()
         };
 
         // Send the form data as JSON via a POST request

@@ -91,8 +91,8 @@ function hasKeyInDictionary(key, dictionary) {
   }
 
 function getChildSessionsContainerWithButton(ButtonObject) {
-    let childSessionsTable = ButtonObject.closest('#childSessionsTable');
-    return childSessionsTable;
+    let childSessionsObject = ButtonObject.closest('#childSessionsObject');
+    return childSessionsObject;
   }
 
 function getCurChildSessionWithButton(ButtonObject) {
@@ -106,9 +106,9 @@ function getChildSessionElementIndex(childSessionsContainer, childSessionElement
     return index;
   }
 
-function createChildSessionsAsTable(data = {}) {
+function createChildSessionsObject(data = {}) {
     let container = $("<div></div>");
-    container.attr("id", "childSessionsTable");
+    container.attr("id", "childSessionsObject");
 
     if (hasKeyInDictionary('ChildSessions', data) && data.ChildSessions && data.ChildSessions.length > 0) {
         for (let i = 0; i < data.ChildSessions.length; i++) {
@@ -148,7 +148,8 @@ function CreateFieldContainerInChildSession(data) {
     }
 
     // data: { name: "xxxx", duration: 0, role: "xx", buffer: "1", comment: "某俱乐部"}
-    function createInputFieldContainer(label_string, field_name_string, default_value="") {
+    // type: text, duration
+    function createInputFieldContainer(label_string, field_name_string, default_value="", type="text") {
         let fieldLabel = $("<label></label>").text(label_string);
         fieldLabel.addClass("user-input-content-label");
         let inputBox = $("<input type=\"text\" class=\"form-control\" />");
