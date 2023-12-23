@@ -1,4 +1,25 @@
-function CreateDurationInputBox(data={}) {
+function CreateParentSessionDurationInputBox(data={}) {
+    function isValidDurationNumber(value) {
+        return /^-?\d*\.?\d+$/.test(value);
+    }
+
+    function addDurationCheckListener(inputBox) {
+        let previousValidValue = inputBox.val();
+    
+        // Use 'blur' event to validate when the input loses focus
+        inputBox.on('blur', function () {
+            // Validate if the input is a valid number
+            if (!isValidDurationNumber(inputBox.val())) {
+                // You can customize this part to handle invalid input (e.g., show an error message)
+                alert("时长输入错误，需要输入整数或者小数，如\"0\"或\"1.5\"");
+                inputBox.val(previousValidValue); // Revert to the previous valid value
+            } else {
+                // Update the previous valid value if the input is valid
+                previousValidValue = inputBox.val();
+            }
+        });
+    }
+
     let container = $("<div></div>"); // Create a container to hold the label and input box
     container.addClass("input-parent-session-duration-container"); // Add a CSS class to style the container
     container.attr("id", "childSessionDurationInputBox");
@@ -21,6 +42,8 @@ function CreateDurationInputBox(data={}) {
 
     container.append(label); // Append the label before the input box
     container.append(input); // Append the input box
+
+    addDurationCheckListener(input);
 
     return container; // Return the container element
 }
@@ -62,7 +85,7 @@ function CreateSessionElement(data) {
     if (data.ChildSessions && data.ChildSessions.length > 0) {
         childSessionsObject = createChildSessionsObject(data)
     } else {
-        childSessionsObject = CreateDurationInputBox(data);
+        childSessionsObject = CreateParentSessionDurationInputBox(data);
     }
     childSessionsObject.hide(); // Hide the childSessionsObject by default
 

@@ -147,6 +147,40 @@ function CreateFieldContainerInChildSession(data) {
         }
     }
 
+    function FieldKeyToInputType(key_name){
+        if (key_name == "duration") {
+            return "duration";
+        } else if (key_name == "comment") {
+            return "text";
+        } else if (key_name == "duration_buffer") {
+            return "duration";
+        } else {
+            return "text";
+        }
+    }
+
+    // Function to add input event listener for duration check
+    function addDurationCheckListener(inputBox) {
+        function isValidDurationNumber(value) {
+            return /^-?\d*\.?\d+$/.test(value);
+        }
+
+        // Store the previous valid value
+        let previousValidValue = inputBox.val();
+
+        inputBox.on('blur', function () {
+            // Validate if the input is a valid number
+            if (!isValidDurationNumber(inputBox.val())) {
+                // You can customize this part to handle invalid input (e.g., show an error message)
+                alert("时长输入错误，需要输入整数或者小数，如\"3\"或\"1.5\"");
+                inputBox.val(previousValidValue); // Revert to the previous valid value
+            } else {
+                // Update the previous valid value if the input is valid
+                previousValidValue = inputBox.val();
+            }
+        });
+    }
+
     // data: { name: "xxxx", duration: 0, role: "xx", buffer: "1", comment: "某俱乐部"}
     // type: text, duration
     function createInputFieldContainer(label_string, field_name_string, default_value="", type="text") {
@@ -163,6 +197,12 @@ function CreateFieldContainerInChildSession(data) {
         let fieldContainer = $("<div class=\"row-container\"></div>"); // Add the row-container class
         fieldContainer.append(fieldLabel);
         fieldContainer.append(inputBox);
+
+        // Add input event listener for numeric validation only if the type is 'duration'
+        if (type === 'duration') {
+            addDurationCheckListener(inputBox);
+        }
+
         return fieldContainer;
     }
     function createEventNameContainer(data) {
@@ -208,7 +248,7 @@ function CreateFieldContainerInChildSession(data) {
             let roleContainer = createRoleContainer(data);
             subContentContainer.append(roleContainer);
         }else{
-            let InputFieldContainer = createInputFieldContainer(FieldKeyToLabel(key), key, value);
+            let InputFieldContainer = createInputFieldContainer(FieldKeyToLabel(key), key, value, FieldKeyToInputType(key));
             subContentContainer.append(InputFieldContainer);
         }
       });
