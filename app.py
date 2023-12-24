@@ -9,6 +9,7 @@ import json
 from flask import Flask, render_template, request,send_file,jsonify,session
 
 from agenda_generation_adaptor import AgendaGenerationAdaptor
+from agenda_history_manager import AgendaHistoryManager
 
 # Set up logging
 log_file = 'app.log'
@@ -51,10 +52,17 @@ def input_agenda_content():
     fields_dict = AgendaGenerationAdaptor.get_meeting_info_fields_dict(selected_template,output_directory)
     return render_template('InputAgendaContent.html',template_fields_dict=fields_dict)
 
-@app.route('/GetUserInputExample')
-def get_user_input_example():
+@app.route('/GetAgendaHistory')
+def get_agenda_history():
     selected_template = session.get('selected_template')
-    user_input_example_json = AgendaGenerationAdaptor.get_user_input_example_json(selected_template)
+    agenda_history_dict = AgendaHistoryManager.get_agenda_history(selected_template)
+    return jsonify(agenda_history_dict)
+
+@app.route('/GetAgendaJsonContent')
+def get_agenda_json_content():
+    selected_agenda_title = request.args.get('selectedAgendaTitle')
+    selected_template = session.get('selected_template')
+    user_input_example_json = AgendaHistoryManager.get_agenda_json_content(selected_template, selected_agenda_title)
     return jsonify({'user_input_example': user_input_example_json})
 
 @app.route('/set_selected_template', methods=['POST'])
@@ -90,7 +98,7 @@ def save_text():
         return render_template('index.html', default_text='', message='生成失败')
 
 
-@app.route('/generate_with_text_blocks', methods=['POST'])
+@app.route('/generate_with_json', methods=['POST'])
 def generate_with_text_blocks():
     # Receive a post with json string, dump it into .json file.
     json_dict = request.get_json()
@@ -100,6 +108,7 @@ def generate_with_text_blocks():
     with open(user_input_file_path, 'w') as json_file:
         json.dump(json_dict, json_file, indent=4, ensure_ascii=False)
     logger.debug(f"Text blocks saved as {user_input_file_path}")
+    session['input_json_file_path'] = user_input_file_path
     output_excel_file_path = os.path.join(file_directory, 'generated_agenda.xlsx')
     session['output_excel_file_path'] = output_excel_file_path
 
@@ -126,9 +135,7 @@ def generate_with_text_blocks():
 
     return jsonify(response_data)
 
-
-@app.route('/export_image', methods=['GET'])
-def export_image():
+def _export_image():
     if ('output_pdf_file_path' not in session) or (not os.path.exists(session.get('output_pdf_file_path'))):
         logger.debug('output_pdf_file_path does not exist, generating pdf.')
         pdf_path = _export_pdf()
@@ -157,8 +164,18 @@ def export_image():
         logger.error(f"An error occurred while executing the command: {str(e)}")
 
     logger.debug(f"Image created in {output_image_file_path}")
+    return output_image_file_path
+
+@app.route('/download_image', methods=['GET'])
+def download_image():
+    _save_input_json_to_history()
+    output_image_file_path = _export_image()
     return send_file(output_image_file_path, as_attachment=True)
 
+@app.route('/preview_image', methods=['GET'])
+def preview_image():
+    output_image_file_path = _export_image()
+    return send_file(output_image_file_path, as_attachment=True)
 
 def _export_pdf():
     input_excel_file_path = session.get('output_excel_file_path')
@@ -180,13 +197,25 @@ def _export_pdf():
     logger.debug(f"PDF generated in {output_pdf_file_path}")
     return output_pdf_file_path
 
+def _save_input_json_to_history():
+    selected_template = session.get('selected_template')
+    input_json_file_path = session.get('input_json_file_path')
+    AgendaHistoryManager.add_file_to_history(selected_template,input_json_file_path)
+
 @app.route('/download_excel', methods=['GET'])
 def download_excel():
+    _save_input_json_to_history()
     excel_file_path = session.get('output_excel_file_path')
     return send_file(excel_file_path, as_attachment=True)
 
 @app.route('/download_pdf', methods=['GET'])
-def export_pdf():
+def download_pdf():
+    _save_input_json_to_history()
+    output_pdf_file_path = _export_pdf()
+    return send_file(output_pdf_file_path, as_attachment=False)
+
+@app.route('/preview_pdf', methods=['GET'])
+def preview_pdf():
     output_pdf_file_path = _export_pdf()
     return send_file(output_pdf_file_path, as_attachment=False)
 

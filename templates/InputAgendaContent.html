@@ -56,6 +56,13 @@
         <div class="row">
             <div class="col-12">
                 <form>
+                    <div class="form-group">
+                        <label for="historicalAgendaSelect">议程表历史</label>
+                        <select id="historicalAgendaSelect" class="form-control">
+                            <option value="">议程表示例</option>
+                        </select>
+                    </div>
+
                     <div class="form-group" , id="meetingInfo">
                         {% for item in template_fields_dict['meeting_info'] %}
                         <div class="input-group">

@@ -2,9 +2,16 @@ const templateSelect = document.getElementById("templateSelect");
 const submitButton = document.getElementById("submitButton");
 
 submitButton.addEventListener("click", function() {
+    const selectedTemplate = templateSelect.value;
+    // Check if selectedTemplate is empty
+    if (!selectedTemplate.trim()) {
+        // Show an alert if the selected template is empty
+        alert("请选择一个议程表模板.");
+        return; // Exit the function to prevent further execution
+    }
+
     MaskUtil.mask();
 
-    const selectedTemplate = templateSelect.value;
     const formData = new FormData();
     formData.append("selected_template", selectedTemplate);
 

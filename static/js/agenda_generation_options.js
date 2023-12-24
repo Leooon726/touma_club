@@ -234,7 +234,7 @@ function showSuccessMessage(message) {
     }, 1500);
 }
 
-function showFailureMessage(message, title="") {
+function showFailureMessage(message, title = "") {
     // Pop a message to notify the user.
     $('#Submitted_Content').empty();
     $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">' + message + '</div>');
@@ -245,10 +245,26 @@ function showFailureMessage(message, title="") {
     $("#staticBackdrop").modal('hide');
 }
 
-$(document).ready(function () {
+function renderHistoricalAgendaSelect(agenda_title_list, default_agenda_title) {
+    // Get the select element
+    let selectElement = $("#historicalAgendaSelect");
+
+    // Clear existing options
+    selectElement.empty();
+
+    // Add options based on agenda_title_list
+    agenda_title_list.forEach(function (agendaTitle) {
+        // Append an option for each agenda title
+        let option = `<option value="${agendaTitle}" ${agendaTitle === default_agenda_title ? 'selected' : ''}>${agendaTitle}</option>`;
+        selectElement.append(option);
+    });
+}
+
+function getAndFillInAgendaJsonContent(selectedAgendaTitle) {
     $.ajax({
-        url: './GetUserInputExample',
+        url: './GetAgendaJsonContent',
         type: 'GET',
+        data: { selectedAgendaTitle: selectedAgendaTitle },
         success: function (response) {
             fillMeetingInfo(response.user_input_example.meeting_info);
             fillRoleNameList(response.user_input_example.role_name_list);
@@ -261,6 +277,31 @@ $(document).ready(function () {
             console.error('Error:', error);
         }
     });
+}
+
+function handleAgendaSelectChange() {
+    var selectedAgendaTitle = $(this).val();
+    getAndFillInAgendaJsonContent(selectedAgendaTitle);
+}
+
+function getAgendaHistory() {
+    $.ajax({
+        url: './GetAgendaHistory',
+        type: 'GET',
+        success: function (response) {
+            renderHistoricalAgendaSelect(response.agenda_title_list, response.default_agenda_title);
+            getAndFillInAgendaJsonContent(response.default_agenda_title);
+        },
+        error: function (error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+$(document).ready(function () {
+    getAgendaHistory();
+
+    $("#historicalAgendaSelect").change(handleAgendaSelectChange);
 
     // Event listener for the submit button click
     $('#submitButton').click(function () {
@@ -281,7 +322,7 @@ $(document).ready(function () {
         // Send the form data as JSON via a POST request
         $.ajax({
             type: 'POST',
-            url: './generate_with_text_blocks',
+            url: './generate_with_json',
             data: JSON.stringify(formData),
             contentType: 'application/json',
             success: function (response) {
@@ -347,41 +388,20 @@ document.getElementById("downloadExcel").addEventListener("click", function () {
                 console.error("Failed to download EXCEL");
 
                 MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function () {
-                    // $("#staticBackdropClose").trigger("click");
-                    $("#staticBackdrop").modal('hide');
-                }, 1500);
+                showFailureMessage("下载Excel版议程表失败");
             }
         })
         .catch(error => {
             console.error("Error:", error);
 
             MaskUtil.unmask();
-            $('#Submitted_Content').empty();
-            $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载Excel版议程表失败</div>');
-            $('#staticBackdrop').modal('show');
-
-            window.setTimeout(function () {
-                // $("#staticBackdropClose").trigger("click");
-                $("#staticBackdrop").modal('hide');
-            }, 1500);
+            showFailureMessage("下载Excel版议程表失败");
         });
 });
 
 document.getElementById("downloadPdf").addEventListener("click", function () {
     if (HasSubmittedMessage == false) {
-        $('#Submitted_Content').empty();
-        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
-        $('#staticBackdrop').modal('show');
-
-        window.setTimeout(function () {
-            // $("#staticBackdropClose").trigger("click");
-            $("#staticBackdrop").modal('hide');
-        }, 1500);
+        showFailureMessage("请先点击生成议程表");
         return;
     }
 
@@ -410,27 +430,13 @@ document.getElementById("downloadPdf").addEventListener("click", function () {
                 console.error("Failed to download PDF");
 
                 MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载PDF版议程表失败</div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function () {
-                    // $("#staticBackdropClose").trigger("click");
-                    $("#staticBackdrop").modal('hide');
-                }, 1500);
+                showFailureMessage("下载PDF版议程表失败");
             }
         })
         .catch(error => {
             console.error("Error:", error);
             MaskUtil.unmask();
-            $('#Submitted_Content').empty();
-            $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载PDF版议程表失败</div>');
-            $('#staticBackdrop').modal('show');
-
-            window.setTimeout(function () {
-                // $("#staticBackdropClose").trigger("click");
-                $("#staticBackdrop").modal('hide');
-            }, 1500);
+            showFailureMessage("下载PDF版议程表失败");
         });
 });
 
@@ -449,7 +455,7 @@ document.getElementById("previewPdf").addEventListener("click", function () {
 
     MaskUtil.mask();
 
-    fetch('./download_pdf', {
+    fetch('./preview_pdf', {
         method: 'GET'
     })
         .then(response => {
@@ -469,47 +475,26 @@ document.getElementById("previewPdf").addEventListener("click", function () {
                 console.error("Failed to retrieve PDF");
 
                 MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览PDF版议程表失败</div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function () {
-                    // $("#staticBackdropClose").trigger("click");
-                    $("#staticBackdrop").modal('hide');
-                }, 1500);
+                showFailureMessage("预览PDF版议程表失败");
             }
         })
         .catch(error => {
             console.error("Error:", error);
             MaskUtil.unmask();
-            $('#Submitted_Content').empty();
-            $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览PDF版议程表失败</div>');
-            $('#staticBackdrop').modal('show');
-
-            window.setTimeout(function () {
-                // $("#staticBackdropClose").trigger("click");
-                $("#staticBackdrop").modal('hide');
-            }, 1500);
+            showFailureMessage("预览PDF版议程表失败");
         });
 });
 
 document.getElementById("downloadImage").addEventListener("click", function () {
     if (HasSubmittedMessage == false) {
-        $('#Submitted_Content').empty();
-        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
-        $('#staticBackdrop').modal('show');
-
-        window.setTimeout(function () {
-            // $("#staticBackdropClose").trigger("click");
-            $("#staticBackdrop").modal('hide');
-        }, 1500);
+        showFailureMessage("请先点击生成议程表");
         return;
     }
 
     MaskUtil.mask();
 
     // Send a GET request to the server to download the PDF
-    fetch('./export_image', {
+    fetch('./download_image', {
         method: 'GET'
     })
         .then(response => {
@@ -525,51 +510,31 @@ document.getElementById("downloadImage").addEventListener("click", function () {
                     window.URL.revokeObjectURL(url);
 
                     MaskUtil.unmask();
-                    showSuccessMessage();
-                    $('#Submitted_Content').empty("下载图片议程表成功");
+                    showSuccessMessage("下载图片议程表成功");
                 });
             } else {
                 console.error("Failed to download image");
 
                 MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载图片议程表失败</div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function () {
-                    $("#staticBackdrop").modal('hide');
-                }, 1500);
+                showFailureMessage("下载议程表图片失败");
             }
         })
         .catch(error => {
             console.error("Error:", error);
             MaskUtil.unmask();
-            $('#Submitted_Content').empty();
-            $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">下载图片议程表失败</div>');
-            $('#staticBackdrop').modal('show');
-
-            window.setTimeout(function () {
-                $("#staticBackdrop").modal('hide');
-            }, 1500);
+            showFailureMessage("下载议程表图片失败");
         });
 });
 
 document.getElementById("previewImage").addEventListener("click", function () {
     if (HasSubmittedMessage == false) {
-        $('#Submitted_Content').empty();
-        $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
-        $('#staticBackdrop').modal('show');
-
-        window.setTimeout(function () {
-            // $("#staticBackdropClose").trigger("click");
-            $("#staticBackdrop").modal('hide');
-        }, 1500);
+        showFailureMessage("请先点击生成议程表");
         return;
     }
 
     MaskUtil.mask();
 
-    fetch('./export_image', {
+    fetch('./preview_image', {
         method: 'GET'
     })
         .then(response => {
@@ -589,27 +554,13 @@ document.getElementById("previewImage").addEventListener("click", function () {
                 console.error("Failed to preview image");
 
                 MaskUtil.unmask();
-                $('#Submitted_Content').empty();
-                $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览图片议程表失败</div>');
-                $('#staticBackdrop').modal('show');
-
-                window.setTimeout(function () {
-                    // $("#staticBackdropClose").trigger("click");
-                    $("#staticBackdrop").modal('hide');
-                }, 1500);
+                showFailureMessage("预览图片议程表失败");
             }
         })
         .catch(error => {
             console.error("Error:", error);
             MaskUtil.unmask();
-            $('#Submitted_Content').empty();
-            $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">预览图片议程表失败</div>');
-            $('#staticBackdrop').modal('show');
-
-            window.setTimeout(function () {
-                // $("#staticBackdropClose").trigger("click");
-                $("#staticBackdrop").modal('hide');
-            }, 1500);
+            showFailureMessage("预览图片议程表失败");
         });
 });
 
