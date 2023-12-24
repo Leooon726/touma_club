@@ -62,7 +62,7 @@
                             <option value="">议程表示例</option>
                         </select>
                     </div>
-
+                    <hr>
                     <div class="form-group" , id="meetingInfo">
                         {% for item in template_fields_dict['meeting_info'] %}
                         <div class="input-group">
@@ -79,14 +79,14 @@
                         </div>
                         {% endfor %}
                     </div>
-
+                    <hr>
                     <div class="form-group">
                         <label for="role_name_list">会议角色及人员</label>
                         <textarea id="role_name_list" class="form-control" name="role_name_list" rows="8"
                             placeholder="请输入会议角色及对应人名">{% for item in template_fields_dict['role_name_list'] %}
     {{ item['role'] }}: {{ item['name'] }}{% if not loop.last %} {% endif %}{% endfor %}</textarea>
                     </div>
-
+                    <hr>
                     <div class="form-group">
                         <label for="">议程安排</label>
                         <!-- <button type="button" id="MeetingSession_Add" class="btn btn-info">添加会议环节</button> -->
@@ -96,14 +96,23 @@
 
                     </div>
 
+                    <form>
+                        <div class="form-group">
+                            <div class="row mb-1">
+                                <div class="col">
+                                    <button type="button" id="MeetingSession_Add" class="btn btn-info btn-lg btn-block">添加会议环节</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
                     <div class="form-group">
-                        <div id="message"></div>
-                        <div class="row mb-1">
+                        <!-- <div class="row mb-1">
                             <div class="col">
                                 <button type="button" id="MeetingSession_Add"
                                     class="btn btn-info btn-lg btn-block">添加会议环节</button>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="row mb-1">
                             <div class="col">
                                 <button type="button" id="submitButton"

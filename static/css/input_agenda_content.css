@@ -9,6 +9,14 @@
     align-items: center;
 }
 
+#MeetingSession_Add {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
 #childsessionFieldsTable td:first-child {
     width: 150px;
   }
