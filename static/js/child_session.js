@@ -96,7 +96,7 @@ function getChildSessionsContainerWithButton(ButtonObject) {
   }
 
 function getCurChildSessionWithButton(ButtonObject) {
-// Find the closes object with class "child-session".
+    // Find the closest object with class "child-session".
     return ButtonObject.closest('.child-session');
   }
 

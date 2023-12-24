@@ -210,25 +210,6 @@ function GetAgendaContentAsDictList() {
     return agendaContentList;
 }
 
-function GetAgendaContent() {
-    let DivDom = $("#MeetingSession");
-
-    let AgendaContent = "";
-    for (let i = 0; i < DivDom.children().length; i++) {
-        let SessionData = GetSessionData(i, i + 1);
-        AgendaContent += "# " + SessionData.Title + "\r\n";
-
-        for (let j = 0; j < SessionData.ChildSessions.length; j++) {
-            let ChildSessioinData = SessionData.ChildSessions[j];
-            let ChildSessionContent = ChildSessioinData.Name + " " + ChildSessioinData.Duration + " " + ChildSessioinData.Role + "\r\n";
-            AgendaContent += ChildSessionContent;
-        }
-
-        AgendaContent += "\r\n";
-    }
-    return AgendaContent;
-}
-
 $(document).on('click', ".AddChildSession", function () {
     let CurrSession = getCurrentSessionFromOperationButton($(this));
     let childSessionsObject = $(CurrSession).find("#childSessionsObject");
@@ -300,31 +281,3 @@ $(document).on('click', '.SessionDel', function () {
     let CurrSession = $(this).parent().parent()
     CurrSession.remove();
 })
-
-function GetSessionData(CurrIndex, NewIndex) {
-
-    let SessionsDom = $("#MeetingSession").children().eq(CurrIndex);
-    let SessionName = SessionsDom.children().eq(0).children().eq(1).val();
-
-    let childSessionsArr = [];
-    let tbodyDom = SessionsDom.children().eq(1).children().eq(1);
-    for (let i = 0; i < tbodyDom.children().length; i++) {
-        let trDom = tbodyDom.children().eq(i);
-        let childSessionIndex = trDom.children().eq(0).text();
-        let childSessionName = trDom.children().eq(1).children().val().trim();
-        let childSessionDuration = trDom.children().eq(2).children().val().trim();
-        let childSessionRole = trDom.children().eq(3).children().val().trim();
-
-        let ChildSessionData = { ChildIndex: childSessionIndex, Name: childSessionName, Duration: childSessionDuration, Role: childSessionRole };
-        childSessionsArr.push(ChildSessionData);
-    }
-
-    let data = { Index: NewIndex, Title: SessionName, ChildSessions: childSessionsArr };
-    return data;
-}
-
-function GetTableRowIndex(CurrIndex, Type) {
-    //up action use -1; down action use 1
-    let RowIndex = Type == 1 ? CurrIndex - 1 : CurrIndex + 1;
-    return RowIndex;
-}

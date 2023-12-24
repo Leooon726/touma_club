@@ -269,6 +269,9 @@ function getAndFillInAgendaJsonContent(selectedAgendaTitle) {
             fillMeetingInfo(response.user_input_example.meeting_info);
             fillRoleNameList(response.user_input_example.role_name_list);
             data = convertBackendScheduleDictListToFrontendDictList(response.user_input_example.agenda_content);
+
+            // Clear existing content in #MeetingSession
+            $("#MeetingSession").empty();
             for (let i = 0; i < data.length; i++) {
                 CreateSessionElement(data[i]);
             }
