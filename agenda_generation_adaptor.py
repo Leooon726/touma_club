@@ -6,7 +6,11 @@ _TEMPLATE_ZOO_PATH = '/home/lighthouse/agenda_template_zoo'
 _PYTHON_PATH = '/home/lighthouse/.pyenv/shims/python3'
 
 class AgendaGenerationAdaptor():
-    _DEFAULT_ROLE_FIELDS = ['礼宾师','摄影师','会议经理','时间官','哼哈师','语法师','总体点评师','破冰师','主席','主持人','备稿演讲者1','备稿演讲者2','即兴主持人','即兴点评师','备稿点评师1','备稿点评师2','下一期会议经理','会员&宾客']
+    _DEFAULT_ROLE_FIELDS = ['礼宾师','摄影师','会议经理','时间官','哼哈师','语法师','总体点评师',
+    '破冰师','主席','主持人','备稿演讲1','备稿演讲2','备稿演讲3','备稿演讲4','备稿演讲者1','备稿演讲者2',
+    '备稿演讲者3','备稿演讲者4','即兴主持人','即兴点评师',
+    '备稿点评师1','备稿点评师2','备稿点评师3','备稿点评师4',
+    '备稿点评师1','备稿点评师2','备稿点评师3','备稿点评师4','下一期会议经理','会员&宾客']
     
     def __init__(self):
         pass
@@ -19,7 +23,7 @@ class AgendaGenerationAdaptor():
         '会议主题' -> False
         '''
         for default_role_field in AgendaGenerationAdaptor._DEFAULT_ROLE_FIELDS:
-            if input_field in default_role_field:
+            if input_field == default_role_field:
                 return True
         return False
 
