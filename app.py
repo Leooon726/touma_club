@@ -6,7 +6,7 @@ import secrets
 from datetime import datetime
 import json
 
-from flask import Flask, render_template, request,send_file,jsonify,session
+from flask import Flask, render_template, request,send_file,jsonify,session, redirect, url_for
 
 from agenda_generation_adaptor import AgendaGenerationAdaptor
 from agenda_history_manager import AgendaHistoryManager
@@ -43,9 +43,17 @@ def select_template():
     # return render_template('DownloadAgenda/SelectTemplates.html')
     return render_template('SelectTemplates.html')
 
+# Define the catch-all route
+@app.route('/<path:path>')
+def catch_all(path):
+    return redirect(url_for('select_template'))
+
 @app.route('/InputAgendaContent')
 def input_agenda_content():
     selected_template = session.get('selected_template')
+    if selected_template is None:
+        return redirect(url_for('select_template'))
+
     logger.debug(f"In InputAgendaContent, selected template: {selected_template}")
     output_directory = _get_or_create_output_file_directory()
     logger.debug(f"output_directory: {output_directory}")
