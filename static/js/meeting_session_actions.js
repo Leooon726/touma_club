@@ -149,6 +149,10 @@ function updateRoleSelect(selectElement, selectedRole) {
     OptionsDom_Default.appendTo(selectElement);
 
     let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
+    // Add the default role strings here
+    const defaultRoles = ["所有人:所有人", "会员&宾客:会员&宾客"]; // Array of default roles
+    RoleArr = defaultRoles.concat(RoleArr); // Prepend default roles to the RoleArr
+
     for (let r = 0; r < RoleArr.length; r++) {
         if (RoleArr[r] != "") {
             let role = $.trim(RoleArr[r].split(/:|：/)[0]);
