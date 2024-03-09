@@ -138,9 +138,26 @@ function GetButtonDom(color, name, classNameForClick) {
     return button;
 }
 
-function updateRoleSelect(selectElement, selectedRole) {
-    let RoleData = $("#role_name_list").val();
+function parseRoleNameStringToRoleList(roleNameString) {
+    // Step 1: Separate the whole string into lines
+    let roleNameLines = roleNameString.split(/[\r\n]+/);
 
+    // Add the default role strings here
+    const defaultRoles = ["所有人:所有人", "会员&宾客:会员&宾客"]; // Array of default roles
+    // Prepend default roles to the roleNameLines
+    roleNameLines = defaultRoles.concat(roleNameLines);
+
+    // Step 2: Extract the part before ":" or "：" into a role list
+    let roleList = roleNameLines.map(roleLine => {
+        // Split the line at ":" or "：" and trim the parts
+        let roleParts = roleLine.split(/[:：]/);
+        return roleParts[0].trim();
+    });
+
+    return roleList.filter(role => role !== ""); // Filter out any empty roles
+}
+
+function updateRoleSelect(selectElement, selectedRole) {
     // Clear existing options
     selectElement.empty();
 
@@ -148,22 +165,17 @@ function updateRoleSelect(selectElement, selectedRole) {
     let OptionsDom_Default = $("<option value=\"\">请选择角色</option>");
     OptionsDom_Default.appendTo(selectElement);
 
-    let RoleArr = RoleData.split(/[(\r\n)\r\n]+/);
-    // Add the default role strings here
-    const defaultRoles = ["所有人:所有人", "会员&宾客:会员&宾客"]; // Array of default roles
-    RoleArr = defaultRoles.concat(RoleArr); // Prepend default roles to the RoleArr
+    let RoleData = getRoleNameString();
+    let RoleList = parseRoleNameStringToRoleList(RoleData);
+    for (let r = 0; r < RoleList.length; r++) {
+        let role = RoleList[r];
+        let OptionStr_Role = "<option value=\"" + role + "\"";
+        if (role == selectedRole)
+            OptionStr_Role += " selected";
+        OptionStr_Role += ">" + role + "</option>";
 
-    for (let r = 0; r < RoleArr.length; r++) {
-        if (RoleArr[r] != "") {
-            let role = $.trim(RoleArr[r].split(/:|：/)[0]);
-            let OptionStr_Role = "<option value=\"" + role + "\"";
-            if (role == selectedRole)
-                OptionStr_Role += " selected";
-            OptionStr_Role += ">" + role + "</option>";
-
-            let OptionDom_Role = $(OptionStr_Role);
-            OptionDom_Role.appendTo(selectElement);
-        }
+        let OptionDom_Role = $(OptionStr_Role);
+        OptionDom_Role.appendTo(selectElement);
     }
 }
 
