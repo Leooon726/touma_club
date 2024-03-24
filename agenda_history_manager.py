@@ -4,6 +4,8 @@ import shutil
 
 
 _AGENDA_HISTORY_PATH = '/home/lighthouse/agenda_history'
+_HISTORY_MEETING_TITLE_FIELD_LIST = ['会议标题', '本期主题']
+_HISTORY_MEETING_DATE_FIELD_LIST = ['会议日期', '日期']
 
 class AgendaHistoryManager():
     def __init__():
@@ -32,10 +34,11 @@ class AgendaHistoryManager():
     @staticmethod
     def add_file_to_history(template_name,json_file_path):
         '''Copys the file in json_file_path into agenda_history_dir, if the file already exists, overwrite it.'''
-        def _find_dict_with_key(list_of_dict, key, value):
-            for d in list_of_dict:
-                if key in d and d[key] == value:
-                    return d
+        def _find_dict_with_key(list_of_dict, key, value_list):
+            for value in value_list:
+                for d in list_of_dict:
+                    if key in d and d[key] == value:
+                        return d
             return None
 
         agenda_history_dir = os.path.join(_AGENDA_HISTORY_PATH,template_name)
@@ -45,8 +48,8 @@ class AgendaHistoryManager():
         # Load the json and get 日期 and 会议标题.
         with open(json_file_path, 'r') as file:
             json_data = json.load(file)
-            title = _find_dict_with_key(json_data['meeting_info'], 'field_name', '会议标题')
-            date = _find_dict_with_key(json_data['meeting_info'], 'field_name', '日期')
+            title = _find_dict_with_key(json_data['meeting_info'], 'field_name', _HISTORY_MEETING_TITLE_FIELD_LIST)
+            date = _find_dict_with_key(json_data['meeting_info'], 'field_name', _HISTORY_MEETING_DATE_FIELD_LIST)
 
         if date and title:
             new_filename = f"{date['content']}_{title['content']}.json"
