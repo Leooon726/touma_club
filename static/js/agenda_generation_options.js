@@ -454,6 +454,7 @@ document.getElementById("previewPdf").addEventListener("click", function () {
         $('#staticBackdrop').modal('show');
 
         window.setTimeout(function () {
+            // $("#staticBackdropClose").trigger("click");
             $("#staticBackdrop").modal('hide');
         }, 1500);
         return;
@@ -461,93 +462,35 @@ document.getElementById("previewPdf").addEventListener("click", function () {
 
     MaskUtil.mask();
 
-    // Open a blank new tab immediately to comply with user interaction for pop-up blockers
-    var newTab = window.open('', '_blank');
-    // Assuming you would like the message to be in HTML
-    // TODO: have a standalone html file.
-    newTab.document.write('<html><head><title>PDF生成中，请稍等...</title></head><body><h2>PDF生成中，请稍等...</h2></body></html>');
-    newTab.document.close(); // Close the document stream
-
     fetch('./preview_pdf', {
         method: 'GET'
     })
-    .then(response => {
-        if (response.ok) {
-            response.blob().then(blob => {
-                var url = window.URL.createObjectURL(blob);
+        .then(response => {
+            if (response.ok) {
+                // If the response is successful, display the PDF in a new browser tab
+                response.blob().then(blob => {
+                    var url = window.URL.createObjectURL(blob);
 
-                // Navigate to the URL in the new tab that was created earlier
-                newTab.location.href = url;
+                    // Open the PDF in a new browser tab
+                    window.open(url, '_blank');
+
+                    MaskUtil.unmask();
+                    showSuccessMessage();
+                    $('#Submitted_Content').empty("预览PDF版议程表成功");
+                });
+            } else {
+                console.error("Failed to retrieve PDF");
 
                 MaskUtil.unmask();
-                showSuccessMessage();
-                $('#Submitted_Content').empty().append("预览PDF版议程表成功");
-            });
-        } else {
-            console.error("Failed to retrieve PDF");
-
-            // Close the new tab if there's an error after opening
-            newTab.close();
-
+                showFailureMessage("预览PDF版议程表失败");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
             MaskUtil.unmask();
             showFailureMessage("预览PDF版议程表失败");
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-
-        // Close the new tab if there's an error after opening
-        newTab.close();
-
-        MaskUtil.unmask();
-        showFailureMessage("预览PDF版议程表失败");
-    });
+        });
 });
-
-// document.getElementById("previewPdf").addEventListener("click", function () {
-//     if (HasSubmittedMessage == false) {
-//         $('#Submitted_Content').empty();
-//         $('#Submitted_Content').append('<div class="alert alert-danger" role="alert">请先点击生成议程表</div>');
-//         $('#staticBackdrop').modal('show');
-
-//         window.setTimeout(function () {
-//             // $("#staticBackdropClose").trigger("click");
-//             $("#staticBackdrop").modal('hide');
-//         }, 1500);
-//         return;
-//     }
-
-//     MaskUtil.mask();
-
-//     fetch('./preview_pdf', {
-//         method: 'GET'
-//     })
-//         .then(response => {
-//             if (response.ok) {
-//                 // If the response is successful, display the PDF in a new browser tab
-//                 response.blob().then(blob => {
-//                     var url = window.URL.createObjectURL(blob);
-
-//                     // Open the PDF in a new browser tab
-//                     window.open(url, '_blank');
-
-//                     MaskUtil.unmask();
-//                     showSuccessMessage();
-//                     $('#Submitted_Content').empty("预览PDF版议程表成功");
-//                 });
-//             } else {
-//                 console.error("Failed to retrieve PDF");
-
-//                 MaskUtil.unmask();
-//                 showFailureMessage("预览PDF版议程表失败");
-//             }
-//         })
-//         .catch(error => {
-//             console.error("Error:", error);
-//             MaskUtil.unmask();
-//             showFailureMessage("预览PDF版议程表失败");
-//         });
-// });
 
 document.getElementById("downloadImage").addEventListener("click", function () {
     if (HasSubmittedMessage == false) {
