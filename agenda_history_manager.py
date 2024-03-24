@@ -25,6 +25,8 @@ class AgendaHistoryManager():
         # Sort files in descending order based on modification time
         agenda_file_name_list = sorted(files, key=lambda x: os.path.getmtime(os.path.join(agenda_history_dir, x)), reverse=True)
         agenda_title_list = [os.path.splitext(agenda_file_name)[0] for agenda_file_name in agenda_file_name_list]
+        if len(agenda_title_list)==0:
+            return None
         return {'agenda_title_list': agenda_title_list, 'default_agenda_title': agenda_title_list[0]}
 
     @staticmethod

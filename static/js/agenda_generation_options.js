@@ -292,8 +292,12 @@ function getAgendaHistory() {
         url: './GetAgendaHistory',
         type: 'GET',
         success: function (response) {
-            renderHistoricalAgendaSelect(response.agenda_title_list, response.default_agenda_title);
-            getAndFillInAgendaJsonContent(response.default_agenda_title);
+            if (response !== null) {
+                renderHistoricalAgendaSelect(response.agenda_title_list, response.default_agenda_title);
+                getAndFillInAgendaJsonContent(response.default_agenda_title);
+            }else{
+                console.info('The server did not provide any agenda history data.');
+            }
         },
         error: function (error) {
             console.error('Error:', error);
