@@ -1,0 +1,7 @@
+template_excel: '/home/lighthouse/agenda_template_zoo/heyan_template/heyan_template.xlsx'
+
+target_sheets:
+  - target_sheet_name: 'Agenda'
+    template_sheet_name: 'Agenda'
+    template_position_sheet_name: 'TemplatePosition'
+    block_position_config: '/home/lighthouse/agenda_template_zoo/heyan_template/block_position_csp_config.yaml'

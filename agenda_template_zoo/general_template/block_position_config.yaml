@@ -1,0 +1,22 @@
+title_block:
+  coordinate: A1
+
+schedule_block:
+  column_position:
+    type: aligned
+    orientation: left
+    object: title_block
+  row_position:
+    type: adjacent
+    orientation: bottom
+    object: title_block
+
+information_block:
+  column_position:
+    type: aligned
+    orientation: left
+    object: schedule_block
+  row_position:
+    type: adjacent
+    orientation: bottom
+    object: schedule_block

@@ -1,0 +1,239 @@
+{
+    "meeting_info": [
+        {
+            "field_name": "会议标题",
+            "content": "广州和言国际演讲俱乐部会议议程表"
+        },
+        {
+            "field_name": "会议期次",
+            "content": "第39次例会"
+        },
+        {
+            "field_name": "日期",
+            "content": "2023-10-14"
+        },
+        {
+            "field_name": "今日一词",
+            "content": "脉络"
+        },
+        {
+            "field_name": "今日一词释义和造句",
+            "content": "释义：比喻条理和头绪。\n造句：成长的脉络有迹可循，没有白走的路，每一步，都算数。"
+        },
+        {
+            "field_name": "开始时间",
+            "content": "9:45"
+        }
+    ],
+    "role_name_list": "会议经理：芳哥\n全体:全体\n主席：李小方\n主持人：珍珠\n时间官：猫王\n哼哈师：邓韬\n语法师：潘昱\n总点评师：芳哥\n笑话大师：潘昱\n备稿演讲1：李小方\n备稿演讲2：余广生\n摄影师：潘昱\n备稿点评1：余广生\n备稿点评2：芳哥\n工作坊导师：太阳",
+    "agenda_content": [
+        {
+            "event_name": "签到",
+            "child_events": [
+                {
+                    "event_name": "签到、欢迎会议与宾客",
+                    "duration": "15",
+                    "role": "全体",
+                    "comment": "和言",
+                    "duration_buffer": "0"
+                }
+            ]
+        },
+        {
+            "event_name": "开场",
+            "child_events": [
+                {
+                    "event_name": "会议召集和会议礼仪宣读",
+                    "duration": "1",
+                    "role": "主席",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "宾客自我介绍",
+                    "duration": "3",
+                    "role": "全体",
+                    "comment": "宾客",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "主席致辞",
+                    "duration": "3",
+                    "role": "主席",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                }
+            ]
+        },
+        {
+            "event_name": "会议促进者环节",
+            "child_events": [
+                {
+                    "event_name": "主持人",
+                    "duration": "1",
+                    "role": "主持人",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "时间官",
+                    "duration": "1",
+                    "role": "时间官",
+                    "comment": "嘉宾",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "哼哈师",
+                    "duration": "1",
+                    "role": "时间官",
+                    "comment": "嘉宾",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "语法师",
+                    "duration": "1",
+                    "role": "语法师",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "总点评师",
+                    "duration": "1",
+                    "role": "总点评师",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "笑话大师",
+                    "duration": "5",
+                    "role": "笑话大师",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                }
+            ]
+        },
+        {
+            "event_name": "备稿演讲环节",
+            "child_events": [
+                {
+                    "event_name": "备稿1：《和言上市公司游学活动》",
+                    "duration": "7",
+                    "role": "备稿演讲1",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "备稿2：《穷弱男智娶白富美》",
+                    "duration": "7",
+                    "role": "备稿演讲2",
+                    "comment": "AACTP",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "大合照、中场休息交流",
+                    "duration": "10",
+                    "role": "摄影师",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                }
+            ]
+        },
+        {
+            "event_name": "备稿点评环节",
+            "child_events": [
+                {
+                    "event_name": "对备稿演讲者李小方的点评",
+                    "duration": "3",
+                    "role": "备稿点评1",
+                    "comment": "AACTP",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "对备稿演讲者余广生的点评",
+                    "duration": "3",
+                    "role": "备稿点评2",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                }
+            ]
+        },
+        {
+            "event_name": "工作坊",
+            "child_events": [
+                {
+                    "event_name": "Pathways 解密",
+                    "duration": "30",
+                    "role": "工作坊导师",
+                    "comment": "特邀嘉宾",
+                    "duration_buffer": "1"
+                }
+            ]
+        },
+        {
+            "event_name": "会议促进者报告",
+            "child_events": [
+                {
+                    "event_name": "语法师报告",
+                    "duration": "2",
+                    "role": "语法师",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "哼哈师报告",
+                    "duration": "1",
+                    "role": "哼哈师",
+                    "comment": "嘉宾",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "时间官报告",
+                    "duration": "1",
+                    "role": "时间官",
+                    "comment": "嘉宾",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "总体点评师报告",
+                    "duration": "5",
+                    "role": "总点评师",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "本场最佳投票",
+                    "duration": "2",
+                    "role": "主持人",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                }
+            ]
+        },
+        {
+            "event_name": "谢幕语",
+            "child_events": [
+                {
+                    "event_name": "《关键时刻》 （来宾感言）",
+                    "duration": "3",
+                    "role": "全体",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "会议最佳颁奖",
+                    "duration": "1",
+                    "role": "主席",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                },
+                {
+                    "event_name": "角色预定/会议结束",
+                    "duration": "1",
+                    "role": "主席",
+                    "comment": "和言",
+                    "duration_buffer": "1"
+                }
+            ]
+        }
+    ]
+}

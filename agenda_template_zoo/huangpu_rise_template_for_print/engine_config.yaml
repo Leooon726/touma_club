@@ -1,0 +1,11 @@
+template_excel: '/home/lighthouse/agenda_template_zoo/huangpu_rise_template_for_print/huangpu_rise_template_for_print.xlsx'
+
+target_sheets:
+  - target_sheet_name: '第一页'
+    template_sheet_name: 'page1'
+    template_position_sheet_name: 'page1_block_position'
+    block_position_config: '/home/lighthouse/agenda_template_zoo/huangpu_rise_template_for_print/page1_block_position_csp_config.yaml'
+  - target_sheet_name: '第二页'
+    template_sheet_name: 'page2'
+    template_position_sheet_name: 'page2_block_position'
+    block_position_config: '/home/lighthouse/agenda_template_zoo/huangpu_rise_template_for_print/page2_block_position_csp_config.yaml'

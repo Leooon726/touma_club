@@ -1,0 +1,226 @@
+{
+    "meeting_info": [
+        {
+            "field_name": "会议标题",
+            "content": "第319次线下中文会议"
+        },
+        {
+            "field_name": "日期",
+            "content": "2023年7月21日"
+        },
+        {
+            "field_name": "线上会议号",
+            "content": "123-456-8987"
+        },
+        {
+            "field_name": "主题",
+            "content": "旅行"
+        },
+        {
+            "field_name": "开始时间",
+            "content": "15:00"
+        },
+        {
+            "field_name": "备稿演讲项目简介",
+            "content": "L1P1 初试啼声，介绍自己\n\nL2P1 演讲项目内容\n"
+        }
+    ],
+    "role_name_list": "礼宾师: xxx \n摄影师: xxx \n会议经理: xxx \n时间官: xxx \n哼哈师: xxx \n语法师: xxx \n总体点评师: xxx \n破冰师: xxx \n主席: xxx \n主持人: xxx \n备稿演讲者: xxx \n即兴主持人: xxx \n即兴点评师: xxx \n备稿点评师: xxx \n下一期会议经理: xxx",
+    "agenda_content": [
+        {
+            "event_name": "会议开场",
+            "child_events": [
+                {
+                    "event_name": "主持人开场白(介绍会议主要内容、及可能的议程改动)",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "介绍会议规则以及宾客介绍（限时每位30秒）",
+                    "duration": "2",
+                    "role": "礼宾师"
+                },
+                {
+                    "event_name": "介绍国际演讲会及黄埔睿思国际演讲俱乐部",
+                    "duration": "5",
+                    "role": "主席"
+                }
+            ]
+        },
+        {
+            "event_name": "会议支持者介绍",
+            "child_events": [
+                {
+                    "event_name": "主持人介绍及中场串词",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "时间官",
+                    "duration": "1",
+                    "role": "时间官"
+                },
+                {
+                    "event_name": "哼哈师",
+                    "duration": "1",
+                    "role": "哼哈师"
+                },
+                {
+                    "event_name": "语法师&词汇大师（今日之词：）",
+                    "duration": "2",
+                    "role": "语法师"
+                },
+                {
+                    "event_name": "总体点评师",
+                    "duration": "1",
+                    "role": "总体点评师"
+                },
+                {
+                    "event_name": "破冰师",
+                    "duration": "6",
+                    "role": "破冰师"
+                }
+            ]
+        },
+        {
+            "event_name": "即兴演讲",
+            "child_events": [
+                {
+                    "event_name": "主持人串词",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "即兴主持人",
+                    "duration": "2",
+                    "role": "即兴主持人"
+                },
+                {
+                    "event_name": "即兴演讲《诗和远方》（演讲每人2分钟，邀请串场1分钟）",
+                    "duration": "18",
+                    "role": "会员&宾客"
+                },
+                {
+                    "event_name": "主持人串词",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "即兴点评报告",
+                    "duration": "7",
+                    "role": "即兴点评师"
+                }
+            ]
+        },
+        {
+            "event_name": "小歇及合影",
+            "duration": "5"
+        },
+        {
+            "event_name": "备稿演讲及点评",
+            "child_events": [
+                {
+                    "event_name": "主持人串词",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "点评师介绍项目级别和要求",
+                    "duration": "1",
+                    "role": "备稿点评师1"
+                },
+                {
+                    "event_name": "备稿演讲1《人工智能，我们该何去何从》",
+                    "duration": "7",
+                    "role": "备稿演讲者1"
+                },
+                {
+                    "event_name": "点评师介绍项目级别和要求",
+                    "duration": "1",
+                    "role": "备稿点评师2"
+                },
+                {
+                    "event_name": "备稿演讲2《蜕变》MS5-1",
+                    "duration": "12",
+                    "role": "备稿演讲者2"
+                },
+                {
+                    "event_name": "主持人串词",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "备稿点评1",
+                    "duration": "3",
+                    "role": "备稿点评师1"
+                },
+                {
+                    "event_name": "主持人串词",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "备稿点评2",
+                    "duration": "3",
+                    "role": "备稿点评师2"
+                }
+            ]
+        },
+        {
+            "event_name": "会议支持者报告",
+            "child_events": [
+                {
+                    "event_name": "主持人开场及中场串词",
+                    "duration": "1",
+                    "role": "主持人"
+                },
+                {
+                    "event_name": "时间官报告",
+                    "duration": "2",
+                    "role": "时间官"
+                },
+                {
+                    "event_name": "哼哈师报告",
+                    "duration": "2",
+                    "role": "哼哈师"
+                },
+                {
+                    "event_name": "语法师报告",
+                    "duration": "3",
+                    "role": "语法师"
+                },
+                {
+                    "event_name": "总体点评师报告",
+                    "duration": "7",
+                    "role": "总体点评师"
+                }
+            ]
+        },
+        {
+            "event_name": "主持人提示观众投票选出“最佳备稿演讲”等，微信小程序投票"
+        },
+        {
+            "event_name": "会议尾声",
+            "child_events": [
+                {
+                    "event_name": "嘉宾回访环节",
+                    "duration": "2",
+                    "role": "主席"
+                },
+                {
+                    "event_name": "颁奖",
+                    "duration": "2",
+                    "role": "主席"
+                },
+                {
+                    "event_name": "会议招募",
+                    "duration": "1",
+                    "role": "下一期会议经理"
+                }
+            ]
+        },
+        {
+            "event_name": "会议结束"
+        }
+    ]
+}

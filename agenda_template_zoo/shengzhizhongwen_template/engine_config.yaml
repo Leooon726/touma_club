@@ -1,0 +1,7 @@
+template_excel: '/home/lighthouse/agenda_template_zoo/shengzhizhongwen_template/shengzhizhongwen_template.xlsx'
+
+target_sheets:
+  - target_sheet_name: 'Sheet'
+    template_sheet_name: 'template'
+    template_position_sheet_name: 'template_position'
+    block_position_config: '/home/lighthouse/agenda_template_zoo/shengzhizhongwen_template/block_position_csp_config.yaml'
